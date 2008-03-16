@@ -1,6 +1,6 @@
 <?php
 /**
-* EAMM (Easy Automatic Module Insertion)
+* EAMI (Easy Automatic Module Insertion)
 *
 * Created By: EXreaction
 * http://www.lithiumstudios.org
