@@ -4,7 +4,7 @@
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.0.1.xsd">
   <header>
     <license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
-    <title lang="en-GB">Advertisement Manager</title>
+    <title lang="en-GB">Advertisement Management</title>
     <description lang="en-GB">Adds an easy to use Advertisement Manager to a phpBB3 forum.</description>
 
     <author-notes lang="en-GB">Please report any bugs/problems at my website: http://www.lithiumstudios.org.  

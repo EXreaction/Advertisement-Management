@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!-- MODX by the phpBB MOD Team XSL file v1.0.1 copyright 2005-2007 the phpBB MOD Team. 
-	$Id: modx.prosilver.en.xsl,v 1.2 2007/09/21 23:10:50 highwayoflife Exp $ -->
+	$Id$ -->
 <!DOCTYPE xsl:stylesheet[
 	<!ENTITY nbsp "&#160;">
 ]>
