@@ -38,6 +38,15 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	// Positions
+	'ABOVE_HEADER'		=> 'Above Header',
+	'BELOW_HEADER'		=> 'Below Header',
+	'ABOVE_POSTS'		=> 'Above Posts',
+	'BELOW_POSTS'		=> 'Below Posts',
+	'AFTER_FIRST_POST'	=> 'After First Post',
+	'AFTER_EVERY_POST'	=> 'After Every Post',
+	'ABOVE_FOOTER'		=> 'Above Footer',
+	'BELOW_FOOTER'		=> 'Below Footer',
 ));
 
 ?>

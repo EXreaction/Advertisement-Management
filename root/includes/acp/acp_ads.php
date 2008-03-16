@@ -19,7 +19,7 @@ if (!defined('IN_PHPBB'))
 /**
 * @package acp
 */
-class acp_board
+class acp_ads
 {
 	var $u_action;
 	var $new_config = array();
@@ -30,6 +30,7 @@ class acp_board
 		global $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 
 		$user->add_lang('mods/ads');
+		$this->tpl_name = 'acp_ads';
 
 		$action	= request_var('action', '');
 		$submit = (isset($_POST['submit'])) ? true : false;
@@ -40,6 +41,8 @@ class acp_board
 		{
 			trigger_error($user->lang['FORM_INVALID'] . adm_back_link($this->u_action), E_USER_WARNING);
 		}
+
+		
 	}
 }
 

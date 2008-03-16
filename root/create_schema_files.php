@@ -825,7 +825,6 @@ function get_schema_struct()
 			'ad_views'		=> array('INDEX', 'ad_views'),
 			'ad_max_views'	=> array('INDEX', 'ad_max_views'),
 			'all_forums'	=> array('INDEX', 'all_forums'),
-			'all_groups'	=> array('INDEX', 'all_groups'),
 		),
 	);
 

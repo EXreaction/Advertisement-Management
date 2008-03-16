@@ -14,6 +14,11 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 }
 
 // Setup some stuff we will need.
+if (!class_exists('auth'))
+{
+	include($phpbb_root_path . 'includes/auth.' . $phpEx);
+}
+
 include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
 include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
 include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
@@ -44,6 +49,13 @@ if (!isset($config['ads_version']))
 		'module_auth'		=> 'acl_a_ads',
 	);
 	$eami->add_module('acp', 'ACP_BOARD_CONFIGURATION', $sql_ary);
+
+	// Insert the default positions
+	$positions = array('ABOVE_HEADER', 'BELOW_HEADER', 'ABOVE_POSTS', 'BELOW_POSTS', 'AFTER_FIRST_POST', 'AFTER_EVERY_POST', 'ABOVE_FOOTER', 'BELOW_FOOTER');
+	foreach ($positions as $position)
+	{
+		$db->sql_query('INSERT INTO ' . ADS_POSITIONS_TABLE . ' ' . $db->sql_build_array('INSERT', array('lang_key' => $position)));
+	}
 
 	// Add the config settings
 	set_config('ads_enable', 1);

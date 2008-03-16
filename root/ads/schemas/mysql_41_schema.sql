@@ -15,8 +15,7 @@ CREATE TABLE phpbb_ads (
 	KEY ad_position (ad_position),
 	KEY ad_views (ad_views),
 	KEY ad_max_views (ad_max_views),
-	KEY all_forums (all_forums),
-	KEY all_groups (all_groups)
+	KEY all_forums (all_forums)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;
 
 

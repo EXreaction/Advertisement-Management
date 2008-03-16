@@ -28,8 +28,6 @@ CREATE INDEX pa_ad_max_views ON phpbb_ads (ad_max_views)
 /
 CREATE INDEX pa_all_forums ON phpbb_ads (all_forums)
 /
-CREATE INDEX pa_all_groups ON phpbb_ads (all_groups)
-/
 
 CREATE SEQUENCE phpbb_ads_seq
 /

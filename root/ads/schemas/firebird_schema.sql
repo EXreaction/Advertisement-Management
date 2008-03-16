@@ -20,7 +20,6 @@ CREATE INDEX phpbb_ads_ad_position ON phpbb_ads(ad_position);;
 CREATE INDEX phpbb_ads_ad_views ON phpbb_ads(ad_views);;
 CREATE INDEX phpbb_ads_ad_max_views ON phpbb_ads(ad_max_views);;
 CREATE INDEX phpbb_ads_all_forums ON phpbb_ads(all_forums);;
-CREATE INDEX phpbb_ads_all_groups ON phpbb_ads(all_groups);;
 
 CREATE GENERATOR phpbb_ads_gen;;
 SET GENERATOR phpbb_ads_gen TO 0;;

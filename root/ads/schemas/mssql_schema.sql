@@ -40,9 +40,6 @@ GO
 CREATE  INDEX [all_forums] ON [phpbb_ads]([all_forums]) ON [PRIMARY]
 GO
 
-CREATE  INDEX [all_groups] ON [phpbb_ads]([all_groups]) ON [PRIMARY]
-GO
-
 
 /*
 	Table: 'phpbb_ads_forums'
