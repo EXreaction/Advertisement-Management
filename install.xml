@@ -55,6 +55,5 @@ You may check for updated code in the repository, but the latest files in the re
     <copy>
       <file from="root/*.*" to="*.*" />
     </copy>
-    <diy-instructions lang="en">Go to ads_install.php in your web browser to install the database section.</diy-instructions>
   </action-group>
 </mod>
