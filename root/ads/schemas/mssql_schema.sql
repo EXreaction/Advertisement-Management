@@ -17,8 +17,7 @@ CREATE TABLE [phpbb_ads] (
 	[ad_position] [int] DEFAULT (0) NOT NULL ,
 	[ad_views] [int] DEFAULT (0) NOT NULL ,
 	[ad_max_views] [int] DEFAULT (0) NOT NULL ,
-	[all_forums] [int] DEFAULT (0) NOT NULL ,
-	[all_groups] [int] DEFAULT (0) NOT NULL 
+	[all_forums] [int] DEFAULT (0) NOT NULL 
 ) ON [PRIMARY]
 GO
 
@@ -68,6 +67,23 @@ CREATE TABLE [phpbb_ads_groups] (
 GO
 
 CREATE  INDEX [ad_group] ON [phpbb_ads_groups]([ad_id], [group_id]) ON [PRIMARY]
+GO
+
+
+/*
+	Table: 'phpbb_ads_positions'
+*/
+CREATE TABLE [phpbb_ads_positions] (
+	[position_id] [int] IDENTITY (1, 1) NOT NULL ,
+	[lang_key] [varchar] (4000) DEFAULT ('') NOT NULL 
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [phpbb_ads_positions] WITH NOCHECK ADD 
+	CONSTRAINT [PK_phpbb_ads_positions] PRIMARY KEY  CLUSTERED 
+	(
+		[position_id]
+	)  ON [PRIMARY] 
 GO
 
 

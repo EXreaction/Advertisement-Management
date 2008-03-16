@@ -11,8 +11,7 @@ CREATE TABLE phpbb_ads (
 	ad_position INTEGER DEFAULT 0 NOT NULL,
 	ad_views INTEGER DEFAULT 0 NOT NULL,
 	ad_max_views INTEGER DEFAULT 0 NOT NULL,
-	all_forums INTEGER DEFAULT 0 NOT NULL,
-	all_groups INTEGER DEFAULT 0 NOT NULL
+	all_forums INTEGER DEFAULT 0 NOT NULL
 );;
 
 ALTER TABLE phpbb_ads ADD PRIMARY KEY (ad_id);;
@@ -49,4 +48,24 @@ CREATE TABLE phpbb_ads_groups (
 );;
 
 CREATE INDEX phpbb_ads_groups_ad_group ON phpbb_ads_groups(ad_id, group_id);;
+
+# Table: 'phpbb_ads_positions'
+CREATE TABLE phpbb_ads_positions (
+	position_id INTEGER NOT NULL,
+	lang_key BLOB SUB_TYPE TEXT CHARACTER SET UTF8 DEFAULT '' NOT NULL
+);;
+
+ALTER TABLE phpbb_ads_positions ADD PRIMARY KEY (position_id);;
+
+
+CREATE GENERATOR phpbb_ads_positions_gen;;
+SET GENERATOR phpbb_ads_positions_gen TO 0;;
+
+CREATE TRIGGER t_phpbb_ads_positions FOR phpbb_ads_positions
+BEFORE INSERT
+AS
+BEGIN
+	NEW.position_id = GEN_ID(phpbb_ads_positions_gen, 1);
+END;;
+
 

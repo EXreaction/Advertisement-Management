@@ -16,7 +16,7 @@
 
 @set_time_limit(0);
 
-$schema_path = 'install/schemas/';
+$schema_path = 'ads/schemas/';
 
 if (!is_writable($schema_path))
 {
@@ -818,7 +818,6 @@ function get_schema_struct()
 			'ad_views'		=> array('UINT', 0),
 			'ad_max_views'	=> array('UINT', 0),
 			'all_forums'	=> array('BOOL', 0),
-			'all_groups'	=> array('BOOL', 0),
 		),
 		'PRIMARY_KEY'	=> 'ad_id',
 		'KEYS'			=> array(
@@ -848,6 +847,14 @@ function get_schema_struct()
 		'KEYS'			=> array(
 			'ad_group'		=> array('INDEX', array('ad_id', 'group_id')),
 		),
+	);
+
+	$schema_data['phpbb_ads_positions'] = array(
+		'COLUMNS'		=> array(
+			'position_id'	=> array('UINT', NULL, 'auto_increment'),
+			'lang_key'		=> array('TEXT_UNI', ''),
+		),
+		'PRIMARY_KEY'	=> 'position_id',
 	);
 
 	return $schema_data;

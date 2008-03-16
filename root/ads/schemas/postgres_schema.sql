@@ -20,7 +20,6 @@ CREATE TABLE phpbb_ads (
 	ad_views INT4 DEFAULT '0' NOT NULL CHECK (ad_views >= 0),
 	ad_max_views INT4 DEFAULT '0' NOT NULL CHECK (ad_max_views >= 0),
 	all_forums INT2 DEFAULT '0' NOT NULL CHECK (all_forums >= 0),
-	all_groups INT2 DEFAULT '0' NOT NULL CHECK (all_groups >= 0),
 	PRIMARY KEY (ad_id)
 );
 
@@ -49,6 +48,18 @@ CREATE TABLE phpbb_ads_groups (
 );
 
 CREATE INDEX phpbb_ads_groups_ad_group ON phpbb_ads_groups (ad_id, group_id);
+
+/*
+	Table: 'phpbb_ads_positions'
+*/
+CREATE SEQUENCE phpbb_ads_positions_seq;
+
+CREATE TABLE phpbb_ads_positions (
+	position_id INT4 DEFAULT nextval('phpbb_ads_positions_seq'),
+	lang_key varchar(4000) DEFAULT '' NOT NULL,
+	PRIMARY KEY (position_id)
+);
+
 
 
 COMMIT;

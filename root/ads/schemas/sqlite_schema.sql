@@ -12,8 +12,7 @@ CREATE TABLE phpbb_ads (
 	ad_position INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	ad_views INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	ad_max_views INTEGER UNSIGNED NOT NULL DEFAULT '0',
-	all_forums INTEGER UNSIGNED NOT NULL DEFAULT '0',
-	all_groups INTEGER UNSIGNED NOT NULL DEFAULT '0'
+	all_forums INTEGER UNSIGNED NOT NULL DEFAULT '0'
 );
 
 CREATE INDEX phpbb_ads_ad_position ON phpbb_ads (ad_position);
@@ -37,6 +36,13 @@ CREATE TABLE phpbb_ads_groups (
 );
 
 CREATE INDEX phpbb_ads_groups_ad_group ON phpbb_ads_groups (ad_id, group_id);
+
+# Table: 'phpbb_ads_positions'
+CREATE TABLE phpbb_ads_positions (
+	position_id INTEGER PRIMARY KEY NOT NULL ,
+	lang_key text(65535) NOT NULL DEFAULT ''
+);
+
 
 
 COMMIT;

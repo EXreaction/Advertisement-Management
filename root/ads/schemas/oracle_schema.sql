@@ -16,7 +16,6 @@ CREATE TABLE phpbb_ads (
 	ad_views number(8) DEFAULT '0' NOT NULL,
 	ad_max_views number(8) DEFAULT '0' NOT NULL,
 	all_forums number(1) DEFAULT '0' NOT NULL,
-	all_groups number(1) DEFAULT '0' NOT NULL,
 	CONSTRAINT pk_phpbb_ads PRIMARY KEY (ad_id)
 )
 /
@@ -71,4 +70,31 @@ CREATE TABLE phpbb_ads_groups (
 
 CREATE INDEX pag_ad_group ON phpbb_ads_groups (ad_id, group_id)
 /
+
+/*
+	Table: 'phpbb_ads_positions'
+*/
+CREATE TABLE phpbb_ads_positions (
+	position_id number(8) NOT NULL,
+	lang_key clob DEFAULT '' ,
+	CONSTRAINT pk_phpbb_ads_positions PRIMARY KEY (position_id)
+)
+/
+
+
+CREATE SEQUENCE phpbb_ads_positions_seq
+/
+
+CREATE OR REPLACE TRIGGER t_phpbb_ads_positions
+BEFORE INSERT ON phpbb_ads_positions
+FOR EACH ROW WHEN (
+	new.position_id IS NULL OR new.position_id = 0
+)
+BEGIN
+	SELECT phpbb_ads_positions_seq.nextval
+	INTO :new.position_id
+	FROM dual;
+END;
+/
+
 

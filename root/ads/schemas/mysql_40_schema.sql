@@ -11,7 +11,6 @@ CREATE TABLE phpbb_ads (
 	ad_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	ad_max_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	all_forums tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
-	all_groups tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
 	PRIMARY KEY (ad_id),
 	KEY ad_position (ad_position),
 	KEY ad_views (ad_views),
@@ -34,6 +33,14 @@ CREATE TABLE phpbb_ads_groups (
 	ad_id mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	group_id mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	KEY ad_group (ad_id, group_id)
+);
+
+
+# Table: 'phpbb_ads_positions'
+CREATE TABLE phpbb_ads_positions (
+	position_id mediumint(8) UNSIGNED NOT NULL auto_increment,
+	lang_key blob NOT NULL,
+	PRIMARY KEY (position_id)
 );
 
 
