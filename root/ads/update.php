@@ -18,7 +18,6 @@ if (!class_exists('auth'))
 {
 	include($phpbb_root_path . 'includes/auth.' . $phpEx);
 }
-
 include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
 include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
 include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
@@ -29,7 +28,7 @@ $db_tool = new phpbb_db_tools($db);
 $dbmd = get_available_dbms($dbms);
 $eami = new eami();
 
-// Install if required.  If there are updates/additions in the future, DO NOT add the additions to this part.
+// Install the base if required.  If there are updates/additions in the future, DO NOT add the additions to this part.
 if (!isset($config['ads_version']))
 {
 	// Add the tables

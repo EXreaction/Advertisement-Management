@@ -11,6 +11,12 @@
 // Debug
 //$start_time = microtime();
 
+/* TODO
+*
+* Finish ACP
+* Add Logs in the ACP
+*/
+
 $ads_version = '0.3.0';
 
 // Stuff required to work with phpBB3.
