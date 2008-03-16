@@ -11,6 +11,7 @@ CREATE TABLE phpbb_ads (
 	ad_position INTEGER DEFAULT 0 NOT NULL,
 	ad_views INTEGER DEFAULT 0 NOT NULL,
 	ad_max_views INTEGER DEFAULT 0 NOT NULL,
+	ad_priority INTEGER DEFAULT 5 NOT NULL,
 	all_forums INTEGER DEFAULT 0 NOT NULL
 );;
 
@@ -19,6 +20,7 @@ ALTER TABLE phpbb_ads ADD PRIMARY KEY (ad_id);;
 CREATE INDEX phpbb_ads_ad_position ON phpbb_ads(ad_position);;
 CREATE INDEX phpbb_ads_ad_views ON phpbb_ads(ad_views);;
 CREATE INDEX phpbb_ads_ad_max_views ON phpbb_ads(ad_max_views);;
+CREATE INDEX phpbb_ads_ad_priority ON phpbb_ads(ad_priority);;
 CREATE INDEX phpbb_ads_all_forums ON phpbb_ads(all_forums);;
 
 CREATE GENERATOR phpbb_ads_gen;;

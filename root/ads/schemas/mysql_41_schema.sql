@@ -10,11 +10,13 @@ CREATE TABLE phpbb_ads (
 	ad_position mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	ad_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	ad_max_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
+	ad_priority tinyint(1) DEFAULT '5' NOT NULL,
 	all_forums tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
 	PRIMARY KEY (ad_id),
 	KEY ad_position (ad_position),
 	KEY ad_views (ad_views),
 	KEY ad_max_views (ad_max_views),
+	KEY ad_priority (ad_priority),
 	KEY all_forums (all_forums)
 ) CHARACTER SET `utf8` COLLATE `utf8_bin`;
 

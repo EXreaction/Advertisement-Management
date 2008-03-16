@@ -17,6 +17,7 @@ CREATE TABLE [phpbb_ads] (
 	[ad_position] [int] DEFAULT (0) NOT NULL ,
 	[ad_views] [int] DEFAULT (0) NOT NULL ,
 	[ad_max_views] [int] DEFAULT (0) NOT NULL ,
+	[ad_priority] [int] DEFAULT (5) NOT NULL ,
 	[all_forums] [int] DEFAULT (0) NOT NULL 
 ) ON [PRIMARY]
 GO
@@ -35,6 +36,9 @@ CREATE  INDEX [ad_views] ON [phpbb_ads]([ad_views]) ON [PRIMARY]
 GO
 
 CREATE  INDEX [ad_max_views] ON [phpbb_ads]([ad_max_views]) ON [PRIMARY]
+GO
+
+CREATE  INDEX [ad_priority] ON [phpbb_ads]([ad_priority]) ON [PRIMARY]
 GO
 
 CREATE  INDEX [all_forums] ON [phpbb_ads]([all_forums]) ON [PRIMARY]

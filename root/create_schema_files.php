@@ -817,6 +817,7 @@ function get_schema_struct()
 			'ad_position'	=> array('UINT', 0),
 			'ad_views'		=> array('UINT', 0),
 			'ad_max_views'	=> array('UINT', 0),
+			'ad_priority'	=> array('TINT:1', 5),
 			'all_forums'	=> array('BOOL', 0),
 		),
 		'PRIMARY_KEY'	=> 'ad_id',
@@ -824,6 +825,7 @@ function get_schema_struct()
 			'ad_position'	=> array('INDEX', 'ad_position'),
 			'ad_views'		=> array('INDEX', 'ad_views'),
 			'ad_max_views'	=> array('INDEX', 'ad_max_views'),
+			'ad_priority'	=> array('INDEX', 'ad_priority'),
 			'all_forums'	=> array('INDEX', 'all_forums'),
 		),
 	);

@@ -46,7 +46,7 @@ $forum_id = request_var('f', 0);
 $user_id = request_var('u', 0); // This will have to be sent with the url, otherwise it would require we initialize a session.  If nothing is sent we will just ignore the groups stuff
 
 // Set some variables up
-$ignore_ads = $available_ads = array();
+$ignore_ads = $available_ads = $id_list = array();
 
 if ($user_id)
 {
@@ -68,11 +68,18 @@ $result = $db->sql_query($sql);
 while ($row = $db->sql_fetchrow($result))
 {
 	$available_ads[] = $row;
+
+	// A simple way to set Advertisement Priority
+	for ($i = 0; $i < $row['ad_priority']; $i++)
+	{
+		$id_list[] = $row['ad_id'];
+	}
 }
 
 if (sizeof($available_ads))
 {
-	echo "document.write('" . htmlspecialchars_decode($available_ads[rand(0, sizeof($available_ads) - 1)]['ad_code']) . "');";
+	$ad_id = $id_list[rand(0, sizeof($id_list) - 1)];
+	echo "document.write('" . htmlspecialchars_decode($available_ads[$ad_id]['ad_code']) . "');";
 }
 
 // Debug

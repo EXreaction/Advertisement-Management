@@ -15,6 +15,7 @@ CREATE TABLE phpbb_ads (
 	ad_position number(8) DEFAULT '0' NOT NULL,
 	ad_views number(8) DEFAULT '0' NOT NULL,
 	ad_max_views number(8) DEFAULT '0' NOT NULL,
+	ad_priority number(1) DEFAULT '5' NOT NULL,
 	all_forums number(1) DEFAULT '0' NOT NULL,
 	CONSTRAINT pk_phpbb_ads PRIMARY KEY (ad_id)
 )
@@ -25,6 +26,8 @@ CREATE INDEX pa_ad_position ON phpbb_ads (ad_position)
 CREATE INDEX pa_ad_views ON phpbb_ads (ad_views)
 /
 CREATE INDEX pa_ad_max_views ON phpbb_ads (ad_max_views)
+/
+CREATE INDEX pa_ad_priority ON phpbb_ads (ad_priority)
 /
 CREATE INDEX pa_all_forums ON phpbb_ads (all_forums)
 /

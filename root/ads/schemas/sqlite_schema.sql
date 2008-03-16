@@ -12,12 +12,14 @@ CREATE TABLE phpbb_ads (
 	ad_position INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	ad_views INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	ad_max_views INTEGER UNSIGNED NOT NULL DEFAULT '0',
+	ad_priority tinyint(1) NOT NULL DEFAULT '5',
 	all_forums INTEGER UNSIGNED NOT NULL DEFAULT '0'
 );
 
 CREATE INDEX phpbb_ads_ad_position ON phpbb_ads (ad_position);
 CREATE INDEX phpbb_ads_ad_views ON phpbb_ads (ad_views);
 CREATE INDEX phpbb_ads_ad_max_views ON phpbb_ads (ad_max_views);
+CREATE INDEX phpbb_ads_ad_priority ON phpbb_ads (ad_priority);
 CREATE INDEX phpbb_ads_all_forums ON phpbb_ads (all_forums);
 
 # Table: 'phpbb_ads_forums'
