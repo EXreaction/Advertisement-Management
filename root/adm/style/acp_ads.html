@@ -1,0 +1,184 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ACP_ADVERTISEMENT_MANAGEMENT}</h1>
+
+<p>{L_ACP_ADVERTISEMENT_MANAGEMENT_EXPLAIN}</p>
+
+<!-- IF ERROR -->
+	<div class="errorbox">
+		<h3>{L_WARNING}</h3>
+		<p>{ERROR}</p>
+	</div>
+<!-- ENDIF -->
+
+<form id="acp_ads" method="post" action="{U_ACTION}">
+
+	<!-- IF .options -->
+		<!-- BEGIN options -->
+			<!-- IF options.S_LEGEND -->
+				<!-- IF not options.S_FIRST_ROW -->
+					</fieldset>
+				<!-- ENDIF -->
+				<fieldset>
+					<legend>{options.LEGEND}</legend>
+			<!-- ELSE -->
+
+				<dl>
+					<dt><label for="{options.KEY}">{options.TITLE}:</label><!-- IF options.S_EXPLAIN --><br /><span>{options.TITLE_EXPLAIN}</span><!-- ENDIF --></dt>
+					<dd>{options.CONTENT}</dd>
+				</dl>
+
+			<!-- ENDIF -->
+		<!-- END options -->
+
+		<!-- IF S_AUTH -->
+			<!-- BEGIN auth_tpl -->
+				{auth_tpl.TPL}
+			<!-- END auth_tpl -->
+		<!-- ENDIF -->
+		</fieldset>
+	<!-- ENDIF -->
+
+	<!-- IF S_ADD_AD or S_EDIT_AD -->
+		<fieldset>
+			<legend>{L_ADVERTISEMENT}</legend>
+			<dl>
+				<dt><label for="ad_name">{L_AD_NAME}:</label><br /><span>{L_AD_NAME_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_name" name="ad_name" size="25" maxlength="255" value="{AD_NAME}" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_code">{L_AD_CODE}:</label><br /><span>{L_AD_CODE_EXPLAIN}</span></dt>
+				<dd><textarea id="ad_code" name="ad_code" rows="5" cols="45">{AD_CODE}</textarea></dd>
+			</dl>
+			<!-- IF S_EDIT_AD -->
+			<dl>
+				<dt><label for="ad_views">{L_AD_VIEWS}:</label><br /><span>{L_AD_VIEWS_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_views" name="ad_views" size="25" maxlength="20" value="{AD_VIEWS}" /></dd>
+			</dl>
+			<!-- ENDIF -->
+			<dl>
+				<dt><label for="ad_max_views">{L_AD_MAX_VIEWS}:</label><br /><span>{L_AD_MAX_VIEWS_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_max_views" name="ad_max_views" size="25" maxlength="20" value="{AD_MAX_VIEWS}" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_priority">{L_AD_PRIORITY}:</label><br /><span>{L_AD_PRIORITY_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_priority" name="ad_priority" size="25" maxlength="3" value="{AD_PRIORITY}" /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_enabled">{L_AD_ENABLED}:</label><br /><span>{L_AD_ENABLED_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" class="radio" name="ad_enabled" value="1"<!-- IF AD_ENABLED --> checked="checked"<!-- ENDIF --> /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_positions">{L_AD_POSITIONS}:</label><br /><span>{L_AD_POSITIONS_EXPLAIN}</span></dt>
+				<dd><select id="ad_positions" name="ad_positions[]" multiple="yes" size="8">
+					<!-- BEGIN positions -->
+					<option value="{positions.POSITION_ID}"<!-- IF positions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{positions.POSITION_NAME}</option>
+					<!-- END positions -->
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_groups">{L_AD_GROUPS}:</label><br /><span>{L_AD_GROUPS_EXPLAIN}</span></dt>
+				<dd><select id="ad_groups" name="ad_groups[]" multiple="yes" size="8">
+					<!-- BEGIN groups -->
+					<option value="{groups.GROUP_ID}"<!-- IF groups.S_SELECTED --> selected="selected"<!-- ENDIF -->>{groups.GROUP_NAME}</option>
+					<!-- END groups -->
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_forums">{L_AD_FORUMS}:</label><br /><span>{L_AD_FORUMS_EXPLAIN}</span></dt>
+				<dd><select id="ad_forums" name="ad_forums[]" multiple="yes" size="8">
+					<!-- BEGIN forums -->
+					<option value="{forums.FORUM_ID}"<!-- IF forums.S_SELECTED --> selected="selected"<!-- ENDIF -->><!-- BEGIN level -->&nbsp; &nbsp; &nbsp;<!-- END level -->{forums.FORUM_NAME}</option>
+					<!-- END forums -->
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt><label for="all_forums">{L_ALL_FORUMS}:</label><br /><span>{L_ALL_FORUMS_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" class="radio" name="all_forums" value="1"<!-- IF ALL_FORUMS --> checked="checked"<!-- ENDIF --> /></dd>
+			</dl>
+		</fieldset>
+	<!-- ENDIF -->
+
+	<!-- IF S_EDIT_POSITION -->
+		<fieldset>
+			<legend>{L_POSITION}</legend>
+			<dl>
+				<dt><label for="position_name">{L_POSITION_NAME}:</label><br /><span>{L_POSITION_NAME_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="position_name" name="position_name" size="25" maxlength="255" value="{POSITION_NAME}" /></dd>
+			</dl>
+		</fieldset>
+	<!-- ENDIF -->
+
+	<fieldset class="submit-buttons">
+		<legend>{L_SUBMIT}</legend>
+		<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+
+<!-- IF S_POSITION_LIST -->
+	<form id="acp_ads" method="post" action="{U_ACTION}">
+		<fieldset class="quick">
+			{L_CREATE_POSITION}: <input type="text" name="position_name" value="" /> <input class="button2" type="submit" name="submit" value="{L_SUBMIT}" />
+			<input type="hidden" name="action" value="add" />
+		</fieldset>
+		{S_FORM_TOKEN}
+	</form>
+	<br />
+
+	<table cellspacing="1">
+	<tr>
+		<th style="width: 75%">{L_POSITION_NAME}</th>
+		<th>{L_ACTION}</th>
+	</tr>
+	<!-- BEGIN positions -->
+		<tr>
+			<td class="col1"><strong>{positions.POSITION_NAME}</strong></td>
+			<td class="col2" style="text-align: center;"><a href="{positions.U_EDIT}">{L_EDIT}</a> | <a href="{positions.U_DELETE}">{L_DELETE}</a></td>
+		</tr>
+	<!-- BEGINELSE -->
+		<tr>
+			<td colspan="5" class="row3">{L_NO_POSITIONS_CREATED}</td>
+		</tr>
+	<!-- END positions -->
+	</tbody>
+	</table>
+<!-- ENDIF -->
+
+<!-- IF S_AD_LIST -->
+	<br />
+	<form id="acp_ads" method="post" action="{U_ACTION}">
+		<fieldset class="quick">
+			{L_CREATE_AD}: <input type="text" name="ad_name" value="" /> <input class="button2" type="submit" name="create" value="{L_SUBMIT}" />
+			<input type="hidden" name="action" value="add" />
+		</fieldset>
+		{S_FORM_TOKEN}
+	</form>
+	<br />
+
+	<table cellspacing="1">
+	<tr>
+		<th style="width: 75%">{L_AD_NAME}</th>
+		<th>{L_ACTION}</th>
+	</tr>
+	<!-- BEGIN ads -->
+		<tr>
+			<td class="col1"><strong>{ads.AD_NAME}</strong></td>
+			<td class="col2" style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
+		</tr>
+	<!-- BEGINELSE -->
+		<tr>
+			<td colspan="5" class="row3">{L_NO_ADS_CREATED}</td>
+		</tr>
+	<!-- END ads -->
+	</tbody>
+	</table>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->
