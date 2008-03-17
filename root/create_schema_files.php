@@ -814,20 +814,13 @@ function get_schema_struct()
 			'ad_id'			=> array('UINT', NULL, 'auto_increment'),
 			'ad_name'		=> array('VCHAR', ''),
 			'ad_code'		=> array('TEXT_UNI', ''),
-			'ad_position'	=> array('UINT', 0),
 			'ad_views'		=> array('UINT', 0),
 			'ad_max_views'	=> array('UINT', 0),
 			'ad_priority'	=> array('TINT:1', 5),
+			'ad_enabled'	=> array('BOOL', 1),
 			'all_forums'	=> array('BOOL', 0),
 		),
 		'PRIMARY_KEY'	=> 'ad_id',
-		'KEYS'			=> array(
-			'ad_position'	=> array('INDEX', 'ad_position'),
-			'ad_views'		=> array('INDEX', 'ad_views'),
-			'ad_max_views'	=> array('INDEX', 'ad_max_views'),
-			'ad_priority'	=> array('INDEX', 'ad_priority'),
-			'all_forums'	=> array('INDEX', 'all_forums'),
-		),
 	);
 
 	$schema_data['phpbb_ads_forums'] = array(
@@ -847,6 +840,26 @@ function get_schema_struct()
 		),
 		'KEYS'			=> array(
 			'ad_group'		=> array('INDEX', array('ad_id', 'group_id')),
+		),
+	);
+
+	$schema_data['phpbb_ads_in_positions'] = array(
+		'COLUMNS'		=> array(
+			'ad_id'			=> array('UINT', 0),
+			'position_id'	=> array('UINT', 0),
+			'ad_views'		=> array('UINT', 0),
+			'ad_max_views'	=> array('UINT', 0),
+			'ad_priority'	=> array('TINT:1', 5),
+			'ad_enabled'	=> array('BOOL', 1),
+			'all_forums'	=> array('BOOL', 0),
+		),
+		'KEYS'			=> array(
+			'ad_position'	=> array('INDEX', array('ad_id', 'position_id')),
+			'ad_views'		=> array('INDEX', 'ad_views'),
+			'ad_max_views'	=> array('INDEX', 'ad_max_views'),
+			'ad_priority'	=> array('INDEX', 'ad_priority'),
+			'ad_enabled'	=> array('INDEX', 'ad_enabled'),
+			'all_forums'	=> array('INDEX', 'all_forums'),
 		),
 	);
 

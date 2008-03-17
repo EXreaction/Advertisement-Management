@@ -12,22 +12,22 @@ CREATE TABLE phpbb_ads (
 	ad_id number(8) NOT NULL,
 	ad_name varchar2(255) DEFAULT '' ,
 	ad_code clob DEFAULT '' ,
-	ad_position number(8) DEFAULT '0' NOT NULL,
 	ad_views number(8) DEFAULT '0' NOT NULL,
 	ad_max_views number(8) DEFAULT '0' NOT NULL,
 	ad_priority number(1) DEFAULT '5' NOT NULL,
+	ad_enabled number(1) DEFAULT '1' NOT NULL,
 	all_forums number(1) DEFAULT '0' NOT NULL,
 	CONSTRAINT pk_phpbb_ads PRIMARY KEY (ad_id)
 )
 /
 
-CREATE INDEX pa_ad_position ON phpbb_ads (ad_position)
-/
 CREATE INDEX pa_ad_views ON phpbb_ads (ad_views)
 /
 CREATE INDEX pa_ad_max_views ON phpbb_ads (ad_max_views)
 /
 CREATE INDEX pa_ad_priority ON phpbb_ads (ad_priority)
+/
+CREATE INDEX pa_ad_enabled ON phpbb_ads (ad_enabled)
 /
 CREATE INDEX pa_all_forums ON phpbb_ads (all_forums)
 /
@@ -70,6 +70,33 @@ CREATE TABLE phpbb_ads_groups (
 /
 
 CREATE INDEX pag_ad_group ON phpbb_ads_groups (ad_id, group_id)
+/
+
+/*
+	Table: 'phpbb_ads_in_positions'
+*/
+CREATE TABLE phpbb_ads_in_positions (
+	ad_id number(8) DEFAULT '0' NOT NULL,
+	position_id number(8) DEFAULT '0' NOT NULL,
+	ad_views number(8) DEFAULT '0' NOT NULL,
+	ad_max_views number(8) DEFAULT '0' NOT NULL,
+	ad_priority number(1) DEFAULT '5' NOT NULL,
+	ad_enabled number(1) DEFAULT '1' NOT NULL,
+	all_forums number(1) DEFAULT '0' NOT NULL
+)
+/
+
+CREATE INDEX paip_ad_position ON phpbb_ads_in_positions (ad_id, position_id)
+/
+CREATE INDEX paip_ad_views ON phpbb_ads_in_positions (ad_views)
+/
+CREATE INDEX paip_ad_max_views ON phpbb_ads_in_positions (ad_max_views)
+/
+CREATE INDEX paip_ad_priority ON phpbb_ads_in_positions (ad_priority)
+/
+CREATE INDEX paip_ad_enabled ON phpbb_ads_in_positions (ad_enabled)
+/
+CREATE INDEX paip_all_forums ON phpbb_ads_in_positions (all_forums)
 /
 
 /*

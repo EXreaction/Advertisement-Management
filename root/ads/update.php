@@ -14,10 +14,7 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 }
 
 // Setup some stuff we will need.
-if (!class_exists('auth'))
-{
-	include($phpbb_root_path . 'includes/auth.' . $phpEx);
-}
+global $dbms, $dbmd;
 include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
 include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
 include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
@@ -58,13 +55,15 @@ if (!isset($config['ads_version']))
 
 	// Add the config settings
 	set_config('ads_enable', 1);
-	set_config('ads_version', '0.3.0'); // Do not change this!
+	set_config('ads_rules_forums', 1);
+	set_config('ads_rules_groups', 1);
+	set_config('ads_version', '0.7.0'); // Do not change this!
 }
 
 // No breaks!
 switch ($config['ads_version'])
 {
-	case '0.3.0' :	
+	case '0.7.0' :	
 }
 
 set_config('ads_version', $ads_version);
