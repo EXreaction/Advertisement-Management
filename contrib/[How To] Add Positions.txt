@@ -1,0 +1,18 @@
+Adding new Positions is extremely easy, just follow these simple steps:
+
+1. Go into the Advertisement Managment module in the ACP:
+	ACP -> General -> Board configuration -> Advertisement Management
+
+2. Type the name of the new position you want in the box next to "Create Position"
+	and hit submit.
+
+3. Go back to the Advertisement Management module, find the new position in
+	the Position List.  Go across from it to find the Position Code and
+	save the code (should be something like "{ADS_9}").
+
+4. Open the template file where you would like to place the advertisement,
+	then place the Position Code where you want the Advertisement to be
+	displayed.
+
+That is it!  Now just add or set an advertisement to that position in the
+	Advertisement Management and it will be shown there.

@@ -413,6 +413,7 @@ class acp_ads
 						$template->assign_block_vars('positions', array(
 							'POSTITION_ID'		=> $row['position_id'],
 							'POSITION_NAME'		=> (isset($user->lang[$row['lang_key']])) ? $user->lang[$row['lang_key']] : $row['lang_key'],
+							'POSITION_CODE'		=> '{ADS_' . $row['position_id'] . '}',
 
 							'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;p=' . $row['position_id'],
 							'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;p=' . $row['position_id'],
