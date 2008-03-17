@@ -79,6 +79,7 @@
 					</select>
 				</dd>
 			</dl>
+			<!-- IF S_RULES_GROUPS -->
 			<dl>
 				<dt><label for="ad_groups">{L_AD_GROUPS}:</label><br /><span>{L_AD_GROUPS_EXPLAIN}</span></dt>
 				<dd><select id="ad_groups" name="ad_groups[]" multiple="yes" size="8">
@@ -88,6 +89,8 @@
 					</select>
 				</dd>
 			</dl>
+			<!-- ENDIF -->
+			<!-- IF S_RULES_FORUMS -->
 			<dl>
 				<dt><label for="ad_forums">{L_AD_FORUMS}:</label><br /><span>{L_AD_FORUMS_EXPLAIN}</span></dt>
 				<dd><select id="ad_forums" name="ad_forums[]" multiple="yes" size="8">
@@ -97,6 +100,7 @@
 					</select>
 				</dd>
 			</dl>
+			<!-- ENDIF -->
 			<dl>
 				<dt><label for="all_forums">{L_ALL_FORUMS}:</label><br /><span>{L_ALL_FORUMS_EXPLAIN}</span></dt>
 				<dd><input type="checkbox" class="radio" name="all_forums" value="1"<!-- IF ALL_FORUMS --> checked="checked"<!-- ENDIF --> /></dd>
@@ -164,12 +168,16 @@
 
 	<table cellspacing="1">
 	<tr>
-		<th style="width: 75%">{L_AD_NAME}</th>
+		<th style="width: 50%">{L_AD_NAME}</th>
+		<th style="width: 100px">{L_AD_ENABLED}</th>
+		<th style="width: 100px">{L_AD_VIEWS}</th>
 		<th>{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN ads -->
 		<tr>
 			<td class="col1"><strong>{ads.AD_NAME}</strong></td>
+			<td class="col1">{ads.AD_ENABLED}</td>
+			<td class="col1">{ads.AD_VIEWS}</td>
 			<td class="col2" style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
 		</tr>
 	<!-- BEGINELSE -->

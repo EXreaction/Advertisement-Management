@@ -49,6 +49,8 @@ $lang = array_merge($lang, array(
 	'BELOW_FOOTER'		=> 'Below Footer',
 
 	// ACP
+	'TRUE' => 'True',
+	'FALSE' => 'False',
 	'ADS_ENABLE'								=> 'Enable Advertisements',
 	'ACP_ADVERTISEMENT_MANAGEMENT_EXPLAIN'		=> 'Here you can change the Advertisement Management Settings, Add/Remove/Edit Advertisement Positions, and Add/Remove/Edit Advertisements.',
 	'ACP_ADVERTISEMENT_MANAGEMENT_SETTINGS'		=> 'Advertisement Management Settings',

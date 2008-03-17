@@ -194,8 +194,14 @@ class acp_ads
 							$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $sql_ary) . ' WHERE ad_id = ' . $ad_id);
 
 							// This is the simplest way to update the groups/forums/positions list
-							$db->sql_query('DELETE FROM ' . ADS_GROUPS_TABLE . ' WHERE ad_id = ' . $ad_id);
-							$db->sql_query('DELETE FROM ' . ADS_FORUMS_TABLE . ' WHERE ad_id = ' . $ad_id);
+							if ($config['ads_rules_groups'])
+							{
+								$db->sql_query('DELETE FROM ' . ADS_GROUPS_TABLE . ' WHERE ad_id = ' . $ad_id);
+							}
+							if ($config['ads_rules_forums'])
+							{
+								$db->sql_query('DELETE FROM ' . ADS_FORUMS_TABLE . ' WHERE ad_id = ' . $ad_id);
+							}
 							$db->sql_query('DELETE FROM ' . ADS_IN_POSITIONS_TABLE . ' WHERE ad_id = ' . $ad_id);
 						}
 						else
@@ -204,14 +210,22 @@ class acp_ads
 							$ad_id = $db->sql_nextid();
 						}
 
-						foreach ($ad_groups as $group_id)
+						if ($config['ads_rules_groups'])
 						{
-							$db->sql_query('INSERT INTO ' . ADS_GROUPS_TABLE . ' ' . $db->sql_build_array('INSERT', array('ad_id' => $ad_id, 'group_id' => $group_id)));
+							foreach ($ad_groups as $group_id)
+							{
+								$db->sql_query('INSERT INTO ' . ADS_GROUPS_TABLE . ' ' . $db->sql_build_array('INSERT', array('ad_id' => $ad_id, 'group_id' => $group_id)));
+							}
+							$cache->destroy('sql', ADS_GROUPS_TABLE);
 						}
 
-						foreach ($ad_forums as $forum_id)
+						if ($config['ads_rules_forums'])
 						{
-							$db->sql_query('INSERT INTO ' . ADS_FORUMS_TABLE . ' ' . $db->sql_build_array('INSERT', array('ad_id' => $ad_id, 'forum_id' => $forum_id)));
+							foreach ($ad_forums as $forum_id)
+							{
+								$db->sql_query('INSERT INTO ' . ADS_FORUMS_TABLE . ' ' . $db->sql_build_array('INSERT', array('ad_id' => $ad_id, 'forum_id' => $forum_id)));
+							}
+							$cache->destroy('sql', ADS_FORUMS_TABLE);
 						}
 
 						foreach ($ad_positions as $position_id)
@@ -227,9 +241,6 @@ class acp_ads
 							);
 							$db->sql_query('INSERT INTO ' . ADS_IN_POSITIONS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
 						}
-
-						$cache->destroy('sql', ADS_FORUMS_TABLE);
-						$cache->destroy('sql', ADS_GROUPS_TABLE);
 						$cache->destroy('sql', ADS_IN_POSITIONS_TABLE);
 
 						trigger_error((($action == 'edit') ? $user->lang['AD_EDIT_SUCCESS'] : $user->lang['AD_ADD_SUCCESS']) . adm_back_link($this->u_action));
@@ -239,6 +250,8 @@ class acp_ads
 						$template->assign_vars(array(
 							'S_ADD_AD'			=> ($action == 'add') ? true : false,
 							'S_EDIT_AD'			=> ($action == 'edit') ? true : false,
+							'S_RULES_GROUPS'	=> ($config['ads_rules_groups']) ? true : false,
+							'S_RULES_FORUMS'	=> ($config['ads_rules_forums']) ? true : false,
 
 							'AD_NAME'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_name'] : $ad_name,
 							'AD_CODE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_code'] : $ad_code,
@@ -408,13 +421,15 @@ class acp_ads
 					$db->sql_freeresult($result);
 
 					// Advertisements
-					$sql = 'SELECT * FROM ' . ADS_TABLE . ' ORDER BY ad_name ASC';
+					$sql = 'SELECT * FROM ' . ADS_TABLE . ' ORDER BY ad_enabled DESC, ad_name ASC';
 					$result = $db->sql_query($sql);
 					while ($row = $db->sql_fetchrow($result))
 					{
 						$template->assign_block_vars('ads', array(
 							'AD_ID'			=> $row['ad_id'],
 							'AD_NAME'		=> $row['ad_name'],
+							'AD_ENABLED'	=> ($row['ad_enabled']) ? $user->lang['TRUE'] : $user->lang['FALSE'],
+							'AD_VIEWS'		=> $row['ad_views'],
 
 							'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
 							'U_DELETE'		=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],
