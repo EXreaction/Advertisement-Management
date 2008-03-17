@@ -22,7 +22,7 @@ function setup_ads()
 {
 	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user;
 
-	$ads_version = '0.7.0';
+	$ads_version = '1.0.0';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
