@@ -55,5 +55,6 @@ You may check for updated code in the repository, but the latest files in the re
     <copy>
       <file from="root/*.*" to="*.*" />
     </copy>
+    <diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.</diy-instructions>
   </action-group>
 </mod>
