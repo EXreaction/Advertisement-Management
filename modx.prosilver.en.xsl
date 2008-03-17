@@ -1282,22 +1282,6 @@ function mod_doKeyPress(e)
 			<xsl:call-template name="give-files-included"></xsl:call-template>
 		</xsl:for-each>
 		<hr />
-    <div id="modDisclaimer">
-      <h3 id="lang-dcl">Disclaimer</h3>
-      <div class="mod-about">
-        <div class="inner">
-          <span class="corners-top">
-            <span></span>
-          </span>
-          <p>
-            <span id="lang-dclt">For security purposes, please check: <a href="http://www.phpbb.com/mods/">http://www.phpbb.com/mods/</a> for the latest version of this MOD. Downloading this MOD from other sites could cause malicious code to enter into your phpBB Forum. As such, phpBB will not offer support for MODs not offered in our MODs database, located at: <a href="http://www.phpbb.com/mods/">http://www.phpbb.com/mods/</a></span>
-          </p>
-          <span class="corners-bottom">
-            <span></span>
-          </span>
-        </div>
-      </div>
-    </div>
     <h3 id="lang-ant">Author Notes</h3>
     <div class="mod-about">
       <div class="inner">
@@ -1371,24 +1355,6 @@ function mod_doKeyPress(e)
           <span class="corners-bottom">
             <span></span>
           </span>
-        </div>
-      </div>
-      <div id="mod-support">
-        <h4>
-          <span id="lang-isp"></span>
-        </h4>
-        <div class="mod-about">
-          <div class="inner">
-            <span class="corners-top">
-              <span></span>
-            </span>
-            <p>
-              <span id="lang-ispt"></span>
-            </p>
-            <span class="corners-bottom">
-              <span></span>
-            </span>
-          </div>
         </div>
       </div>
     </div>

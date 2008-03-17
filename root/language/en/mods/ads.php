@@ -44,7 +44,7 @@ $lang = array_merge($lang, array(
 	'ABOVE_POSTS'		=> 'Above Posts',
 	'BELOW_POSTS'		=> 'Below Posts',
 	'AFTER_FIRST_POST'	=> 'After First Post',
-	'AFTER_EVERY_POST'	=> 'After Every Post',
+	'AFTER_EVERY_POST'	=> 'After Every Post Except First',
 	'ABOVE_FOOTER'		=> 'Above Footer',
 	'BELOW_FOOTER'		=> 'Below Footer',
 

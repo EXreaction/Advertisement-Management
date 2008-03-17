@@ -2,59 +2,163 @@
 <?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
 <!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD. Although MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD. No support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.0.1.xsd">
-  <header>
-    <license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
-    <title lang="en-GB">Advertisement Management</title>
-    <description lang="en-GB">Adds an easy to use Advertisement Manager to a phpBB3 forum.</description>
+	<header>
+		<license>http://opensource.org/licenses/gpl-license.php GNU General Public License v2</license>
+		<title lang="en-GB">Advertisement Management</title>
+		<description lang="en-GB">Adds an easy to use Advertisement Manager to a phpBB3 forum.</description>
 
-    <author-notes lang="en-GB">Please report any bugs/problems at my website: http://www.lithiumstudios.org.  
-The SVN repository for this project is: http://phpbb3-advertisement-management.googlecode.com/svn/trunk/  
-You may check for updated code in the repository, but the latest files in the repository may be broken and have major errors.</author-notes>
+		<author-notes lang="en-GB">subsilver2 instructions are available in the templates/ directory.</author-notes>
 
-    <author-group>
-      <author>
-        <username>EXreaction</username>
-        <realname>Nathan Guse</realname>
-        <homepage>http://www.lithiumstudios.org/</homepage>
-        <email>exreaction@lithiumstidos.org</email>
-      </author>
-    </author-group>
+		<author-group>
+			<author>
+				<username>EXreaction</username>
+				<realname>Nathan Guse</realname>
+				<homepage>http://www.lithiumstudios.org/</homepage>
+				<email>exreaction@lithiumstidos.org</email>
+			</author>
+		</author-group>
 
-    <mod-version>
-      <major>0</major>
-      <minor>3</minor>
-      <revision>0</revision>
-    </mod-version>
+		<mod-version>
+			<major>1</major>
+			<minor>0</minor>
+			<revision>0</revision>
+		</mod-version>
 
-    <installation>
-      <level>easy</level>
-      <time>0</time>
-      <target-version>
-        <target-primary>3.0</target-primary>
-        <target-major allow="exact">3</target-major>
-        <target-minor allow="exact">0</target-minor>
-      </target-version>
-    </installation>
+		<installation>
+			<level>easy</level>
+			<time>300</time>
+			<target-version>
+				<target-primary>3.0</target-primary>
+				<target-major allow="exact">3</target-major>
+				<target-minor allow="exact">0</target-minor>
+			</target-version>
+		</installation>
 
-    <history>
-	  <entry>
-        <date>2008-00-00</date>
-        <rev-version>
-          <major>0</major>
-          <minor>3</minor>
-          <revision>0</revision>
-        </rev-version>
-        <changelog lang="en-GB">
-          <change></change>
-        </changelog>
-      </entry>
-    </history>
-  </header>
+		<history>
+			<entry>
+				<date>2008-03-16</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>0</revision>
+				</rev-version>
+				<changelog lang="en-GB">
+					<change>Initial Release</change>
+				</changelog>
+			</entry>
+		</history>
+	</header>
+	<action-group>
+		<copy>
+			<file from="root/adm/style/acp_ads.html" to="adm/style/acp_ads.html"/>
+			<file from="root/ads/create_schema_files.php" to="ads/create_schema_files.php"/>
+			<file from="root/ads/eami.php" to="ads/eami.php"/>
+			<file from="root/ads/functions.php" to="ads/functions.php"/>
+			<file from="root/ads/schemas/firebird_schema.sql" to="ads/schemas/firebird_schema.sql"/>
+			<file from="root/ads/schemas/index.htm" to="ads/schemas/index.htm"/>
+			<file from="root/ads/schemas/mssql_schema.sql" to="ads/schemas/mssql_schema.sql"/>
+			<file from="root/ads/schemas/mysql_40_schema.sql" to="ads/schemas/mysql_40_schema.sql"/>
+			<file from="root/ads/schemas/mysql_41_schema.sql" to="ads/schemas/mysql_41_schema.sql"/>
+			<file from="root/ads/schemas/oracle_schema.sql" to="ads/schemas/oracle_schema.sql"/>
+			<file from="root/ads/schemas/postgres_schema.sql" to="ads/schemas/postgres_schema.sql"/>
+			<file from="root/ads/schemas/sqlite_schema.sql" to="ads/schemas/sqlite_schema.sql"/>
+			<file from="root/ads/update.php" to="ads/update.php"/>
+			<file from="root/includes/acp/acp_ads.php" to="includes/acp/acp_ads.php"/>
+			<file from="root/includes/acp/info/acp_ads.php" to="includes/acp/info/acp_ads.php"/>
+			<file from="root/language/en/mods/ads.php" to="language/en/mods/ads.php"/>
+			<file from="root/language/en/mods/info_acp_ads.php" to="language/en/mods/info_acp_ads.php"/>
+		</copy>
+		<open src="includes/constants.php">
+			<edit>
+				<find>define('ZEBRA_TABLE',				$table_prefix . 'zebra');
 
-  <action-group>
-    <copy>
-      <file from="root/*.*" to="*.*" />
-    </copy>
-    <diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.</diy-instructions>
-  </action-group>
+// Additional tables</find>
+
+				<action type="after-add">// Advertisement Management
+define('ADS_TABLE',					$table_prefix . 'ads');
+define('ADS_FORUMS_TABLE',			$table_prefix . 'ads_forums');
+define('ADS_GROUPS_TABLE',			$table_prefix . 'ads_groups');
+define('ADS_IN_POSITIONS_TABLE',	$table_prefix . 'ads_in_positions');
+define('ADS_POSITIONS_TABLE',		$table_prefix . 'ads_positions');</action>
+			</edit>
+		</open>
+
+		<open src="includes/functions.php">
+			<edit>
+				<find>	}
+
+	// Which timezone?
+	$tz = ($user-&gt;data['user_id'] != ANONYMOUS) ? strval(doubleval($user-&gt;data['user_timezone'])) : strval(doubleval($config['board_timezone']));</find>
+
+				<action type="after-add">
+	// Advertisement Management
+	require($phpbb_root_path . 'ads/functions.' . $phpEx);
+	setup_ads();</action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/overall_footer.html">
+
+			<edit>
+				<find><![CDATA[	</div>]]></find>
+				<action type="after-add">
+	{ADS_7}</action>
+			</edit>
+			<edit>
+				<find><![CDATA[		<!-- IF TRANSLATION_INFO --><br />{TRANSLATION_INFO}<!-- ENDIF -->
+		<!-- IF DEBUG_OUTPUT --><br />{DEBUG_OUTPUT}<!-- ENDIF -->
+		<!-- IF U_ACP --><br /><strong><a href="{U_ACP}">{L_ACP}</a></strong><!-- ENDIF -->
+	</div>]]></find>
+				<action type="after-add">
+
+	{ADS_8}</action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/overall_header.html">
+			<edit>
+				<find><![CDATA[
+<div id="wrap">
+	<a id="top" name="top" accesskey="t"></a>
+	<div id="page-header">]]></find>
+				<action type="after-add">
+	{ADS_1}</action>
+
+			</edit>
+			<edit>
+				<find><![CDATA[			<span class="corners-bottom"><span></span></span></div>
+		</div>
+
+	</div>]]></find>
+				<action type="after-add">
+	{ADS_2}</action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/viewtopic_body.html">
+
+			<edit>
+				<find><![CDATA[
+		<span class="corners-bottom"><span></span></span></div>
+	</div>
+<!-- ENDIF -->]]></find>
+				<action type="after-add">
+{ADS_3}</action>
+			</edit>
+			<edit>
+				<find><![CDATA[		<span class="corners-bottom"><span></span></span></div>
+	</div>
+
+	<hr class="divider" />]]></find>
+				<action type="after-add"><![CDATA[	<!-- IF postrow.S_FIRST_ROW -->{ADS_5}<!-- ELSE -->{ADS_6}<!-- ENDIF -->]]></action>
+			</edit>
+
+			<edit>
+				<find><![CDATA[			<!-- IF PAGE_NUMBER --><!-- IF PAGINATION --> &bull; <a href="#" onclick="jumpto(); return false;" title="{L_JUMP_TO_PAGE}">{PAGE_NUMBER}</a> &bull; <span>{PAGINATION}</span><!-- ELSE --> &bull; {PAGE_NUMBER}<!-- ENDIF --><!-- ENDIF -->
+		</div>
+	<!-- ENDIF -->
+</div>]]></find>
+				<action type="after-add">
+{ADS_4}</action>
+			</edit>
+		</open>
+	<diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.</diy-instructions>
+	</action-group>
 </mod>
