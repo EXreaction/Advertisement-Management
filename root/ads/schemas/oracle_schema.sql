@@ -21,16 +21,6 @@ CREATE TABLE phpbb_ads (
 )
 /
 
-CREATE INDEX pa_ad_views ON phpbb_ads (ad_views)
-/
-CREATE INDEX pa_ad_max_views ON phpbb_ads (ad_max_views)
-/
-CREATE INDEX pa_ad_priority ON phpbb_ads (ad_priority)
-/
-CREATE INDEX pa_ad_enabled ON phpbb_ads (ad_enabled)
-/
-CREATE INDEX pa_all_forums ON phpbb_ads (all_forums)
-/
 
 CREATE SEQUENCE phpbb_ads_seq
 /

@@ -16,11 +16,6 @@ CREATE TABLE phpbb_ads (
 	all_forums INTEGER UNSIGNED NOT NULL DEFAULT '0'
 );
 
-CREATE INDEX phpbb_ads_ad_views ON phpbb_ads (ad_views);
-CREATE INDEX phpbb_ads_ad_max_views ON phpbb_ads (ad_max_views);
-CREATE INDEX phpbb_ads_ad_priority ON phpbb_ads (ad_priority);
-CREATE INDEX phpbb_ads_ad_enabled ON phpbb_ads (ad_enabled);
-CREATE INDEX phpbb_ads_all_forums ON phpbb_ads (all_forums);
 
 # Table: 'phpbb_ads_forums'
 CREATE TABLE phpbb_ads_forums (

@@ -12,12 +12,7 @@ CREATE TABLE phpbb_ads (
 	ad_priority tinyint(1) DEFAULT '5' NOT NULL,
 	ad_enabled tinyint(1) UNSIGNED DEFAULT '1' NOT NULL,
 	all_forums tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
-	PRIMARY KEY (ad_id),
-	KEY ad_views (ad_views),
-	KEY ad_max_views (ad_max_views),
-	KEY ad_priority (ad_priority),
-	KEY ad_enabled (ad_enabled),
-	KEY all_forums (all_forums)
+	PRIMARY KEY (ad_id)
 );
 
 
