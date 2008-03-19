@@ -6,6 +6,10 @@
 
 <p>{L_ACP_ADVERTISEMENT_MANAGEMENT_EXPLAIN}</p>
 
+<br />
+<p><strong>{L_ADS_VERSION}:</strong> {ADS_VERSION}</p>
+<br />
+
 <!-- IF ERROR -->
 	<div class="errorbox">
 		<h3>{L_WARNING}</h3>
@@ -58,10 +62,6 @@
 				<dd><input class="medium" type="text" id="ad_views" name="ad_views" size="25" maxlength="20" value="{AD_VIEWS}" /></dd>
 			</dl>
 			<!-- ENDIF -->
-			<dl>
-				<dt><label for="ad_max_views">{L_AD_MAX_VIEWS}:</label><br /><span>{L_AD_MAX_VIEWS_EXPLAIN}</span></dt>
-				<dd><input class="medium" type="text" id="ad_max_views" name="ad_max_views" size="25" maxlength="20" value="{AD_MAX_VIEWS}" /></dd>
-			</dl>
 			<dl>
 				<dt><label for="ad_priority">{L_AD_PRIORITY}:</label><br /><span>{L_AD_PRIORITY_EXPLAIN}</span></dt>
 				<dd><input class="medium" type="text" id="ad_priority" name="ad_priority" size="25" maxlength="3" value="{AD_PRIORITY}" /></dd>
@@ -143,10 +143,10 @@
 		<th>{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN positions -->
-		<tr>
-			<td class="col1"><strong>{positions.POSITION_NAME}</strong></td>
-			<td class="col1">{positions.POSITION_CODE}</td>
-			<td class="col2" style="text-align: center;"><a href="{positions.U_EDIT}">{L_EDIT}</a> | <a href="{positions.U_DELETE}">{L_DELETE}</a></td>
+		<tr class="<!-- IF positions.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{positions.POSITION_NAME}</strong></td>
+			<td>{positions.POSITION_CODE}</td>
+			<td style="text-align: center;"><a href="{positions.U_EDIT}">{L_EDIT}</a> | <a href="{positions.U_DELETE}">{L_DELETE}</a></td>
 		</tr>
 	<!-- BEGINELSE -->
 		<tr>
@@ -159,6 +159,7 @@
 
 <!-- IF S_AD_LIST -->
 	<br />
+	<p style="float: left; width: 60%;">{L_AD_LIST_NOTICE}</p>
 	<form id="acp_ads" method="post" action="{U_ACTION}">
 		<fieldset class="quick">
 			{L_CREATE_AD}: <input type="text" name="ad_name" value="" /> <input class="button2" type="submit" name="create" value="{L_SUBMIT}" />
@@ -173,14 +174,16 @@
 		<th style="width: 50%">{L_AD_NAME}</th>
 		<th style="width: 100px">{L_AD_ENABLED}</th>
 		<th style="width: 100px">{L_AD_VIEWS}</th>
+		<th style="width: 100px">{L_AD_CLICKS}</th>
 		<th>{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN ads -->
-		<tr>
-			<td class="col1"><strong>{ads.AD_NAME}</strong></td>
-			<td class="col1">{ads.AD_ENABLED}</td>
-			<td class="col1">{ads.AD_VIEWS}</td>
-			<td class="col2" style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{ads.AD_NAME}</strong></td>
+			<td>{ads.AD_ENABLED}</td>
+			<td>{ads.AD_VIEWS}</td>
+			<td>{ads.AD_CLICKS}</td>
+			<td style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
 		</tr>
 	<!-- BEGINELSE -->
 		<tr>

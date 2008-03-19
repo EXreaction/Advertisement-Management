@@ -20,9 +20,9 @@ if (!defined('IN_PHPBB'))
 */
 function setup_ads()
 {
-	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user;
+	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user, $forum_id;
 
-	$ads_version = '1.0.0';
+	$ads_version = '1.0.1';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
@@ -52,11 +52,11 @@ function setup_ads()
 		$db->sql_freeresult($result);
 	}
 
-	if ($config['ads_rules_forums'] && request_var('f', 0))
+	if ($config['ads_rules_forums'] && $forum_id)
 	{
 		$forum_ads = array();
 		$sql = 'SELECT ad_id FROM ' . ADS_FORUMS_TABLE . '
-			WHERE forum_id = ' . request_var('f', 0);
+			WHERE forum_id = ' . intval($forum_id);
 		$result = $db->sql_query($sql, 300); // Cache this data for 5 minutes
 		while ($row = $db->sql_fetchrow($result))
 		{
@@ -65,16 +65,14 @@ function setup_ads()
 		$db->sql_freeresult($result);
 
 		$sql = 'SELECT ad_id, position_id, ad_priority FROM ' . ADS_IN_POSITIONS_TABLE . '
-			WHERE ad_enabled = 1
-			AND (ad_max_views = 0 OR ad_views < ad_max_views)' . 
+			WHERE ad_enabled = 1' . 
 			((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : ' AND all_forums = 1') .
 			((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '');
 	}
 	else
 	{
 		$sql = 'SELECT ad_id, position_id, ad_priority FROM ' . ADS_IN_POSITIONS_TABLE . '
-			WHERE ad_enabled = 1
-			AND (ad_max_views = 0 OR ad_views < ad_max_views)' .
+			WHERE ad_enabled = 1' .
 			((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '');
 	}
 	$result = $db->sql_query($sql);
@@ -100,7 +98,7 @@ function setup_ads()
 			$id_list[] = $available_ads[$position_id] = $ary[rand(0, sizeof($ary) - 1)];
 		}
 
-		$sql = 'SELECT * FROM ' . ADS_TABLE . '
+		$sql = 'SELECT ad_id, ad_code FROM ' . ADS_TABLE . '
 			WHERE ' . $db->sql_in_set('ad_id', array_unique($id_list));
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
@@ -111,13 +109,18 @@ function setup_ads()
 
 		foreach ($available_ads as $position_id => $ad_id)
 		{
+			$code = htmlspecialchars_decode($ads[$ad_id]['ad_code']);
+			$code = ($config['ads_count_clicks']) ? str_replace(array('{COUNT_CLICK}', '{COUNT_CLICKS}'), ' onclick="countAdClick(' . $ad_id . ');"', $code) : $code;
+			$code = ($config['ads_accurate_views']) ? '<img src="' . $phpbb_root_path . 'images/spacer.gif" onload="countAdView(' . $ad_id . ');" />' . $code : $code;
 			$template->assign_vars(array(
-				'ADS_' . $position_id		=> str_replace('{COUNT_CLICK}', ' onclick="countClick(' . $ad_id . ');"', htmlspecialchars_decode($ads[$ad_id]['ad_code'])),
+				'ADS_' . $position_id		=> $code,
 			));
 		}
 
-		$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ' . $db->sql_in_set('ad_id', array_unique($id_list)));
-		$db->sql_query('UPDATE ' . ADS_IN_POSITIONS_TABLE . ' SET ad_views = ad_views + 1 WHERE ' . $db->sql_in_set('ad_id', array_unique($id_list)));
+		if ($config['ads_count_views'] && !$config['ads_accurate_views'])
+		{
+			$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ' . $db->sql_in_set('ad_id', array_unique($id_list)));
+		}
 	}
 }
 ?>

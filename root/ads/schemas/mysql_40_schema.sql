@@ -8,7 +8,6 @@ CREATE TABLE phpbb_ads (
 	ad_name varbinary(255) DEFAULT '' NOT NULL,
 	ad_code blob NOT NULL,
 	ad_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
-	ad_max_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	ad_priority tinyint(1) DEFAULT '5' NOT NULL,
 	ad_enabled tinyint(1) UNSIGNED DEFAULT '1' NOT NULL,
 	all_forums tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
@@ -36,14 +35,10 @@ CREATE TABLE phpbb_ads_groups (
 CREATE TABLE phpbb_ads_in_positions (
 	ad_id mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	position_id mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
-	ad_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
-	ad_max_views mediumint(8) UNSIGNED DEFAULT '0' NOT NULL,
 	ad_priority tinyint(1) DEFAULT '5' NOT NULL,
 	ad_enabled tinyint(1) UNSIGNED DEFAULT '1' NOT NULL,
 	all_forums tinyint(1) UNSIGNED DEFAULT '0' NOT NULL,
 	KEY ad_position (ad_id, position_id),
-	KEY ad_views (ad_views),
-	KEY ad_max_views (ad_max_views),
 	KEY ad_priority (ad_priority),
 	KEY ad_enabled (ad_enabled),
 	KEY all_forums (all_forums)

@@ -9,7 +9,6 @@ CREATE TABLE phpbb_ads (
 	ad_name VARCHAR(255) CHARACTER SET NONE DEFAULT '' NOT NULL,
 	ad_code BLOB SUB_TYPE TEXT CHARACTER SET UTF8 DEFAULT '' NOT NULL,
 	ad_views INTEGER DEFAULT 0 NOT NULL,
-	ad_max_views INTEGER DEFAULT 0 NOT NULL,
 	ad_priority INTEGER DEFAULT 5 NOT NULL,
 	ad_enabled INTEGER DEFAULT 1 NOT NULL,
 	all_forums INTEGER DEFAULT 0 NOT NULL
@@ -49,16 +48,12 @@ CREATE INDEX phpbb_ads_groups_ad_group ON phpbb_ads_groups(ad_id, group_id);;
 CREATE TABLE phpbb_ads_in_positions (
 	ad_id INTEGER DEFAULT 0 NOT NULL,
 	position_id INTEGER DEFAULT 0 NOT NULL,
-	ad_views INTEGER DEFAULT 0 NOT NULL,
-	ad_max_views INTEGER DEFAULT 0 NOT NULL,
 	ad_priority INTEGER DEFAULT 5 NOT NULL,
 	ad_enabled INTEGER DEFAULT 1 NOT NULL,
 	all_forums INTEGER DEFAULT 0 NOT NULL
 );;
 
 CREATE INDEX phpbb_ads_in_positions_ad_position ON phpbb_ads_in_positions(ad_id, position_id);;
-CREATE INDEX phpbb_ads_in_positions_ad_views ON phpbb_ads_in_positions(ad_views);;
-CREATE INDEX phpbb_ads_in_positions_ad_max_views ON phpbb_ads_in_positions(ad_max_views);;
 CREATE INDEX phpbb_ads_in_positions_ad_priority ON phpbb_ads_in_positions(ad_priority);;
 CREATE INDEX phpbb_ads_in_positions_ad_enabled ON phpbb_ads_in_positions(ad_enabled);;
 CREATE INDEX phpbb_ads_in_positions_all_forums ON phpbb_ads_in_positions(all_forums);;

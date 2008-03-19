@@ -57,13 +57,18 @@ if (!isset($config['ads_version']))
 	set_config('ads_enable', 1);
 	set_config('ads_rules_forums', 1);
 	set_config('ads_rules_groups', 1);
-	set_config('ads_version', '0.7.0'); // Do not change this!
+	set_config('ads_version', '1.0.0'); // Do not change this!
 }
 
 // No breaks!
 switch ($config['ads_version'])
 {
-	case '0.7.0' :	
+	case '0.7.0' :
+	case '1.0.0' :
+		$db_tool->sql_column_add(ADS_TABLE, 'ad_clicks', array('UINT', 0));
+		set_config('ads_count_clicks', 1);
+		set_config('ads_count_views', 1);
+		set_config('ads_accurate_views', 0);
 }
 
 set_config('ads_version', $ads_version);

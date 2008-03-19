@@ -12,7 +12,7 @@
 * If you overwrite the original schema files please make sure you save the file with UNIX linefeeds.
 */
 
-die("Please read the first lines of this script for instructions on how to enable it");
+die("Do NOT add any fields to the schemas anymore!  Those must be added by the update script.");
 
 @set_time_limit(0);
 
@@ -815,7 +815,6 @@ function get_schema_struct()
 			'ad_name'		=> array('VCHAR', ''),
 			'ad_code'		=> array('TEXT_UNI', ''),
 			'ad_views'		=> array('UINT', 0),
-			'ad_max_views'	=> array('UINT', 0),
 			'ad_priority'	=> array('TINT:1', 5),
 			'ad_enabled'	=> array('BOOL', 1),
 			'all_forums'	=> array('BOOL', 0),
@@ -847,16 +846,12 @@ function get_schema_struct()
 		'COLUMNS'		=> array(
 			'ad_id'			=> array('UINT', 0),
 			'position_id'	=> array('UINT', 0),
-			'ad_views'		=> array('UINT', 0),
-			'ad_max_views'	=> array('UINT', 0),
 			'ad_priority'	=> array('TINT:1', 5),
 			'ad_enabled'	=> array('BOOL', 1),
 			'all_forums'	=> array('BOOL', 0),
 		),
 		'KEYS'			=> array(
 			'ad_position'	=> array('INDEX', array('ad_id', 'position_id')),
-			'ad_views'		=> array('INDEX', 'ad_views'),
-			'ad_max_views'	=> array('INDEX', 'ad_max_views'),
 			'ad_priority'	=> array('INDEX', 'ad_priority'),
 			'ad_enabled'	=> array('INDEX', 'ad_enabled'),
 			'all_forums'	=> array('INDEX', 'all_forums'),

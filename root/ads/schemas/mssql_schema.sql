@@ -15,7 +15,6 @@ CREATE TABLE [phpbb_ads] (
 	[ad_name] [varchar] (255) DEFAULT ('') NOT NULL ,
 	[ad_code] [varchar] (4000) DEFAULT ('') NOT NULL ,
 	[ad_views] [int] DEFAULT (0) NOT NULL ,
-	[ad_max_views] [int] DEFAULT (0) NOT NULL ,
 	[ad_priority] [int] DEFAULT (5) NOT NULL ,
 	[ad_enabled] [int] DEFAULT (1) NOT NULL ,
 	[all_forums] [int] DEFAULT (0) NOT NULL 
@@ -62,8 +61,6 @@ GO
 CREATE TABLE [phpbb_ads_in_positions] (
 	[ad_id] [int] DEFAULT (0) NOT NULL ,
 	[position_id] [int] DEFAULT (0) NOT NULL ,
-	[ad_views] [int] DEFAULT (0) NOT NULL ,
-	[ad_max_views] [int] DEFAULT (0) NOT NULL ,
 	[ad_priority] [int] DEFAULT (5) NOT NULL ,
 	[ad_enabled] [int] DEFAULT (1) NOT NULL ,
 	[all_forums] [int] DEFAULT (0) NOT NULL 
@@ -71,12 +68,6 @@ CREATE TABLE [phpbb_ads_in_positions] (
 GO
 
 CREATE  INDEX [ad_position] ON [phpbb_ads_in_positions]([ad_id], [position_id]) ON [PRIMARY]
-GO
-
-CREATE  INDEX [ad_views] ON [phpbb_ads_in_positions]([ad_views]) ON [PRIMARY]
-GO
-
-CREATE  INDEX [ad_max_views] ON [phpbb_ads_in_positions]([ad_max_views]) ON [PRIMARY]
 GO
 
 CREATE  INDEX [ad_priority] ON [phpbb_ads_in_positions]([ad_priority]) ON [PRIMARY]

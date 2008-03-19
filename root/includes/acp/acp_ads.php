@@ -90,6 +90,9 @@ class acp_ads
 			'ads_enable'			=> array('lang' => 'ADS_ENABLE', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => false),
 			'ads_rules_groups'		=> array('lang' => 'ADS_RULES_GROUPS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 			'ads_rules_forums'		=> array('lang' => 'ADS_RULES_FORUMS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+			'ads_count_clicks'		=> array('lang' => 'ADS_COUNT_CLICKS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+			'ads_count_views'		=> array('lang' => 'ADS_COUNT_VIEWS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+			'ads_accurate_views'	=> array('lang' => 'ADS_ACCURATE_VIEWS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 		);
 		$this->new_config = $config;
 		$this->new_config = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $this->new_config;
@@ -183,7 +186,6 @@ class acp_ads
 							'ad_name'			=> $ad_name,
 							'ad_code'			=> $ad_code,
 							'ad_views'			=> request_var('ad_views', 0),
-							'ad_max_views'		=> request_var('ad_max_views', 0),
 							'ad_priority'		=> request_var('ad_priority', 5),
 							'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
 							'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
@@ -234,7 +236,6 @@ class acp_ads
 								'ad_id'				=> $ad_id,
 								'position_id'		=> $position_id,
 								'ad_views'			=> request_var('ad_views', 0),
-								'ad_max_views'		=> request_var('ad_max_views', 0),
 								'ad_priority'		=> request_var('ad_priority', 5),
 								'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
 								'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
@@ -256,7 +257,6 @@ class acp_ads
 							'AD_NAME'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_name'] : $ad_name,
 							'AD_CODE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_code'] : $ad_code,
 							'AD_VIEWS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_views'] : request_var('ad_views', 0),
-							'AD_MAX_VIEWS'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_max_views'] : request_var('ad_max_views', 0),
 							'AD_PRIORITY'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
 							'AD_ENABLED'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
 							'ALL_FORUMS'		=> ($action == 'edit' && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,
@@ -406,7 +406,7 @@ class acp_ads
 					));
 
 					// Positions
-					$sql = 'SELECT * FROM ' . ADS_POSITIONS_TABLE . ' ORDER BY lang_key ASC';
+					$sql = 'SELECT * FROM ' . ADS_POSITIONS_TABLE . ' ORDER BY position_id ASC';
 					$result = $db->sql_query($sql);
 					while ($row = $db->sql_fetchrow($result))
 					{
@@ -431,6 +431,7 @@ class acp_ads
 							'AD_NAME'		=> $row['ad_name'],
 							'AD_ENABLED'	=> ($row['ad_enabled']) ? $user->lang['TRUE'] : $user->lang['FALSE'],
 							'AD_VIEWS'		=> $row['ad_views'],
+							'AD_CLICKS'		=> ($row['ad_clicks']) ? $row['ad_clicks'] : $user->lang['0_OR_NA'],
 
 							'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
 							'U_DELETE'		=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],
@@ -483,6 +484,7 @@ class acp_ads
 
 		$template->assign_vars(array(
 			'ERROR'				=> implode('<br />', $error),
+			'ADS_VERSION'		=> $config['ads_version'],
 		));
 	}
 }
