@@ -112,7 +112,7 @@ function setup_ads()
 		foreach ($available_ads as $position_id => $ad_id)
 		{
 			$template->assign_vars(array(
-				'ADS_' . $position_id		=> htmlspecialchars_decode($ads[$ad_id]['ad_code']),
+				'ADS_' . $position_id		=> str_replace('{COUNT_CLICK}', ' onclick="countClick(' . $ad_id . ');"', htmlspecialchars_decode($ads[$ad_id]['ad_code'])),
 			));
 		}
 
