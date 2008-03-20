@@ -186,6 +186,7 @@ class acp_ads
 							'ad_name'			=> $ad_name,
 							'ad_code'			=> $ad_code,
 							'ad_views'			=> request_var('ad_views', 0),
+							'ad_clicks'			=> request_var('ad_clicks', 0),
 							'ad_priority'		=> request_var('ad_priority', 5),
 							'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
 							'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
@@ -235,7 +236,6 @@ class acp_ads
 							$sql_ary = array(
 								'ad_id'				=> $ad_id,
 								'position_id'		=> $position_id,
-								'ad_views'			=> request_var('ad_views', 0),
 								'ad_priority'		=> request_var('ad_priority', 5),
 								'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
 								'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
@@ -257,6 +257,7 @@ class acp_ads
 							'AD_NAME'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_name'] : $ad_name,
 							'AD_CODE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_code'] : $ad_code,
 							'AD_VIEWS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_views'] : request_var('ad_views', 0),
+							'AD_CLICKS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_clicks'] : request_var('ad_clicks', 0),
 							'AD_PRIORITY'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
 							'AD_ENABLED'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
 							'ALL_FORUMS'		=> ($action == 'edit' && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,

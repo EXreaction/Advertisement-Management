@@ -69,6 +69,7 @@ $lang = array_merge($lang, array(
 	'ADVERTISEMENT_MANAGEMENT_UPDATE_SUCCESS'	=> 'The Advertisement Management settings have been updated successfully!',
 	'AD_ADD_SUCCESS'							=> 'Advertisement Added Successfully!',
 	'AD_CLICKS'									=> 'Ad Clicks',
+	'AD_CLICKS_EXPLAIN'							=> 'The current number of clicks for this advertisement (if setup correctly).',
 	'AD_CODE'									=> 'Ad Code',
 	'AD_CODE_EXPLAIN'							=> 'The Advertisement code you would like shown goes here.  All code should be put in a raw HTML form, BBcodes are not supported.<br /><strong>If you would like to enable the click counter, use the {COUNT_CLICK} in any place where the onclick attribute is allowed (the a tag for example).</strong>',
 	'AD_EDIT_SUCCESS'							=> 'Advertisement Edited Successfully!',
