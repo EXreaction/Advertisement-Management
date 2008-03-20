@@ -21,7 +21,7 @@
 		<mod-version>
 			<major>1</major>
 			<minor>0</minor>
-			<revision>0</revision>
+			<revision>1</revision>
 		</mod-version>
 
 		<installation>
@@ -46,6 +46,17 @@
 					<change>Initial Release</change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2008-03-19</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>1</revision>
+				</rev-version>
+				<changelog lang="en-GB">
+					<change>Adding option to count Ad Clicks.  Removing the option to set the Max Views (it added quite a bit of server load and I doubt it will be used often).</change>
+				</changelog>
+			</entry>
 		</history>
 	</header>
 	<action-group>
@@ -67,6 +78,10 @@
 			</edit>
 		</open>
 		<open src="styles/subsilver2/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE ads/ads.js -->]]></action>
+			</edit>
 			<edit>
 
 				<find><![CDATA[

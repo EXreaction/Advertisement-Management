@@ -21,7 +21,7 @@
 		<mod-version>
 			<major>1</major>
 			<minor>0</minor>
-			<revision>0</revision>
+			<revision>1</revision>
 		</mod-version>
 
 		<installation>
@@ -46,27 +46,22 @@
 					<change>Initial Release</change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2008-03-19</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>1</revision>
+				</rev-version>
+				<changelog lang="en-GB">
+					<change>Adding option to count Ad Clicks.  Removing the option to set the Max Views (it added quite a bit of server load and I doubt it will be used often).</change>
+				</changelog>
+			</entry>
 		</history>
 	</header>
 	<action-group>
 		<copy>
-			<file from="root/adm/style/acp_ads.html" to="adm/style/acp_ads.html"/>
-			<file from="root/ads/create_schema_files.php" to="ads/create_schema_files.php"/>
-			<file from="root/ads/eami.php" to="ads/eami.php"/>
-			<file from="root/ads/functions.php" to="ads/functions.php"/>
-			<file from="root/ads/schemas/firebird_schema.sql" to="ads/schemas/firebird_schema.sql"/>
-			<file from="root/ads/schemas/index.htm" to="ads/schemas/index.htm"/>
-			<file from="root/ads/schemas/mssql_schema.sql" to="ads/schemas/mssql_schema.sql"/>
-			<file from="root/ads/schemas/mysql_40_schema.sql" to="ads/schemas/mysql_40_schema.sql"/>
-			<file from="root/ads/schemas/mysql_41_schema.sql" to="ads/schemas/mysql_41_schema.sql"/>
-			<file from="root/ads/schemas/oracle_schema.sql" to="ads/schemas/oracle_schema.sql"/>
-			<file from="root/ads/schemas/postgres_schema.sql" to="ads/schemas/postgres_schema.sql"/>
-			<file from="root/ads/schemas/sqlite_schema.sql" to="ads/schemas/sqlite_schema.sql"/>
-			<file from="root/ads/update.php" to="ads/update.php"/>
-			<file from="root/includes/acp/acp_ads.php" to="includes/acp/acp_ads.php"/>
-			<file from="root/includes/acp/info/acp_ads.php" to="includes/acp/info/acp_ads.php"/>
-			<file from="root/language/en/mods/ads.php" to="language/en/mods/ads.php"/>
-			<file from="root/language/en/mods/info_acp_ads.php" to="language/en/mods/info_acp_ads.php"/>
+			<file from="root/*.*" to="*.*"/>
 		</copy>
 		<open src="includes/constants.php">
 			<edit>
@@ -114,6 +109,10 @@ define('ADS_POSITIONS_TABLE',		$table_prefix . 'ads_positions');</action>
 			</edit>
 		</open>
 		<open src="styles/prosilver/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE ads/ads.js -->]]></action>
+			</edit>
 			<edit>
 				<find><![CDATA[
 <div id="wrap">
