@@ -17,9 +17,21 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 global $dbms, $dbmd;
 include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
 include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
-include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
-include($phpbb_root_path . 'ads/eami.' . $phpEx);
+
+if (!class_exists('phpbb_db_tools'))
+{
+	include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
+}
+
+if (!class_exists('auth_admin'))
+{
+	include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
+}
+
+if (!class_exists('eami'))
+{
+	include($phpbb_root_path . 'ads/eami.' . $phpEx);
+}
 $auth_admin = new auth_admin();
 $db_tool = new phpbb_db_tools($db);
 $dbmd = get_available_dbms($dbms);
