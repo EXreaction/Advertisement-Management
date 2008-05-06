@@ -21,7 +21,7 @@
 		<mod-version>
 			<major>1</major>
 			<minor>0</minor>
-			<revision>1</revision>
+			<revision>2_dev</revision>
 		</mod-version>
 
 		<installation>
@@ -55,6 +55,18 @@
 				</rev-version>
 				<changelog lang="en-GB">
 					<change>Adding option to count Ad Clicks.  Removing the option to set the Max Views (it added quite a bit of server load and I doubt it will be used often).</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2008-05-</date>
+				<rev-version>
+					<major>1</major>
+					<minor>0</minor>
+					<revision>2</revision>
+				</rev-version>
+				<changelog lang="en-GB">
+					<change>Repackaging with the new version of EAMI which fixes a bug.</change>
+					<change>Those who are upgrading should use this script to fix their modules: http://www.lithiumstudios.org/forum/viewtopic.php?f=9&amp;t=691</change>
 				</changelog>
 			</entry>
 		</history>
