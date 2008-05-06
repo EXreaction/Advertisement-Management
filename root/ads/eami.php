@@ -121,14 +121,8 @@ class eami
 		}
 
 		// Update the left and right ID's in the database
-		$sql = 'UPDATE ' . MODULES_TABLE . "
-			SET left_id = left_id + 2
-				WHERE left_id >= '{$left_id}'";
-		$db->sql_query($sql);
-		$sql = 'UPDATE ' . MODULES_TABLE . "
-			SET right_id = right_id + 2
-				WHERE right_id >= '{$left_id}'";
-		$db->sql_query($sql);
+		$db->sql_query('UPDATE ' . MODULES_TABLE . ' SET left_id = left_id + 2 WHERE left_id >= ' . $left_id . ' AND module_class = \'' . $class . '\'');
+		$db->sql_query('UPDATE ' . MODULES_TABLE . ' SET right_id = right_id + 2 WHERE right_id >= ' . $left_id . ' AND module_class = \'' . $class . '\'');
 
 		// Insert the new module into the DB
 		$sql = 'INSERT INTO ' . MODULES_TABLE . ' ' . $db->sql_build_array('INSERT', $data);
