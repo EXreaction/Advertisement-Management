@@ -4,7 +4,7 @@
 * @package phpBB3 Advertisement Management
 * @version $Id: ads.php 6 2008-03-16 03:45:19Z exreaction@gmail.com $
 * @copyright (c) 2008 EXreaction, Lithium Studios
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License 
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -439,7 +439,7 @@ class acp_ads
 						));
 					}
 					$db->sql_freeresult($result);
-					
+
 					// Config Variables
 					foreach ($config_vars as $config_key => $vars)
 					{

@@ -4,7 +4,7 @@
 * @package phpBB3 Advertisement Management
 * @version $Id$
 * @copyright (c) 2008 EXreaction, Lithium Studios
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License 
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -81,6 +81,7 @@ switch ($config['ads_version'])
 		set_config('ads_count_clicks', 1);
 		set_config('ads_count_views', 1);
 		set_config('ads_accurate_views', 0);
+	case '1.0.1' :
 }
 
 set_config('ads_version', $ads_version);
