@@ -7,7 +7,7 @@
 		<title lang="en">Advertisement Management</title>
 		<description lang="en">Adds an easy to use Advertisement Manager to a phpBB3 forum.</description>
 
-		<author-notes lang="en">subsilver2 instructions are available in the templates/ directory.</author-notes>
+		<author-notes lang="en"></author-notes>
 
 		<author-group>
 			<author>
@@ -57,6 +57,10 @@
 				</changelog>
 			</entry>
 		</history>
+
+	<link-group>
+		<link type="template" href="subsilver2.xml" lang="en">subsilver2</link>
+	</link-group>
 	</header>
 	<action-group>
 		<copy>
