@@ -22,7 +22,7 @@ function setup_ads()
 {
 	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user, $forum_id;
 
-	$ads_version = '1.0.2';
+	$ads_version = '1.0.3';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
@@ -68,7 +68,7 @@ function setup_ads()
 
 	$sql = 'SELECT ad_id, position_id, ad_priority FROM ' . ADS_IN_POSITIONS_TABLE . '
 		WHERE ad_enabled = 1' .
-		((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : ' AND all_forums = 1') .
+		((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : (($config['ads_rules_forums']) ? ' AND all_forums = 1' : '')) .
 		((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '');
 	$result = $db->sql_query($sql);
 

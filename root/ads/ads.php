@@ -83,7 +83,7 @@ if ($config['ads_rules_forums'])
 $sql = 'SELECT ad_id, ad_priority FROM ' . ADS_IN_POSITIONS_TABLE . '
 	WHERE ad_enabled = 1
 	AND position_id = ' . $position_id .
-	((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : ' AND all_forums = 1') .
+	((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : (($config['ads_rules_forums']) ? ' AND all_forums = 1' : '')) .
 	((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '');
 $result = $db->sql_query($sql);
 

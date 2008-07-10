@@ -82,6 +82,7 @@ switch ($config['ads_version'])
 		set_config('ads_count_views', 1);
 		set_config('ads_accurate_views', 0);
 	case '1.0.1' :
+	case '1.0.2' :
 }
 
 set_config('ads_version', $ads_version);

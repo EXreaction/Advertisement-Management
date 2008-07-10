@@ -189,7 +189,7 @@ class acp_ads
 							'ad_clicks'			=> request_var('ad_clicks', 0),
 							'ad_priority'		=> request_var('ad_priority', 5),
 							'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
-							'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
+							'all_forums'		=> (isset($_POST['all_forums']) || !$config['ads_rules_forums']) ? true : false,
 						);
 
 						if ($action == 'edit')
@@ -238,7 +238,7 @@ class acp_ads
 								'position_id'		=> $position_id,
 								'ad_priority'		=> request_var('ad_priority', 5),
 								'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
-								'all_forums'		=> (isset($_POST['all_forums'])) ? true : false,
+								'all_forums'		=> (isset($_POST['all_forums']) || !$config['ads_rules_forums']) ? true : false,
 							);
 							$db->sql_query('INSERT INTO ' . ADS_IN_POSITIONS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
 						}
