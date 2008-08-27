@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB3 Advertisement Management
-* @version $Id: ads.php 6 2008-03-16 03:45:19Z exreaction@gmail.com $
+* @version $Id$
 * @copyright (c) 2008 EXreaction, Lithium Studios
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
