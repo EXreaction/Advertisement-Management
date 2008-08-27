@@ -51,6 +51,29 @@ if (!$config['ads_enable'])
 	exit;
 }
 
+// A built in cron-like function for disabling ads after they reach their end date.  Runs once every hour
+if ($config['ads_last_cron'] < (time() - 3600))
+{
+	$ads_to_disable = array();
+	$sql = 'SELECT ad_id FROM ' . ADS_TABLE . '
+		WHERE ad_enabled = 1
+		AND ad_time_end > 0
+		AND ad_time_end < ' . time();
+	$result = $db->sql_query($sql);
+	while ($row = $db->sql_fetchrow($result))
+	{
+		$ads_to_disable[] = $row['ad_id'];
+	}
+	$db->sql_freeresult($result);
+
+	if (sizeof($ads_to_disable))
+	{
+		$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_enabled = 0 WHERE ' . $db->sql_in_set('ad_id', $ads_to_disable));
+		$db->sql_query('UPDATE ' . ADS_IN_POSITIONS_TABLE . ' SET ad_enabled = 0 WHERE ' . $db->sql_in_set('ad_id', $ads_to_disable));
+	}
+	set_config('ads_last_cron', time(), true);
+}
+
 // Set some variables up
 $ads = $ignore_ads = $forum_ads = $available_ads = $id_list = array();
 

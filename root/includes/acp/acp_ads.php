@@ -98,12 +98,14 @@ class acp_ads
 		$this->new_config = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $this->new_config;
 
 		// Other settings
-		$ad_name = request_var('ad_name', '', true);
-		$ad_code = request_var('ad_code', '', true);
+		$ad_name = utf8_normalize_nfc(request_var('ad_name', '', true));
+		$ad_code = utf8_normalize_nfc(request_var('ad_code', '', true));
+		$ad_note = utf8_normalize_nfc(request_var('ad_note', '', true));
+		$ad_time_end = (utf8_normalize_nfc(request_var('ad_time_end', '', true))) ? strtotime(utf8_normalize_nfc(request_var('ad_time_end', '', true))) : 0;
 		$ad_groups = request_var('ad_groups', array(0), true);
 		$ad_forums = request_var('ad_forums', array(0), true);
 		$ad_positions = request_var('ad_positions', array(0), true);
-		$position_name = request_var('position_name', '', true);
+		$position_name = request_var('position_name', '');
 
 		switch ($action)
 		{
@@ -178,6 +180,11 @@ class acp_ads
 						{
 							$error[] = $user->lang['NO_AD_NAME'];
 						}
+
+						if ($ad_time_end !== false && $ad_time_end > 0 && $ad_time_end < time())
+						{
+							$error[] = $user->lang['AD_TIME_END_BEFORE_NOW'];
+						}
 					}
 
 					if ($submit && !sizeof($error))
@@ -185,6 +192,9 @@ class acp_ads
 						$sql_ary = array(
 							'ad_name'			=> $ad_name,
 							'ad_code'			=> $ad_code,
+							'ad_note'			=> $ad_note,
+							'ad_time'			=> time(),
+							'ad_time_end'		=> ($ad_time_end !== false && $ad_time_end > 0) ? $ad_time_end : 0,
 							'ad_views'			=> request_var('ad_views', 0),
 							'ad_clicks'			=> request_var('ad_clicks', 0),
 							'ad_priority'		=> request_var('ad_priority', 5),
@@ -242,7 +252,6 @@ class acp_ads
 							);
 							$db->sql_query('INSERT INTO ' . ADS_IN_POSITIONS_TABLE . ' ' . $db->sql_build_array('INSERT', $sql_ary));
 						}
-						$cache->destroy('sql', ADS_IN_POSITIONS_TABLE);
 
 						trigger_error((($action == 'edit') ? $user->lang['AD_EDIT_SUCCESS'] : $user->lang['AD_ADD_SUCCESS']) . adm_back_link($this->u_action));
 					}
@@ -256,6 +265,8 @@ class acp_ads
 
 							'AD_NAME'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_name'] : $ad_name,
 							'AD_CODE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_code'] : $ad_code,
+							'AD_NOTE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_note'] : $ad_note,
+							'AD_TIME_END'		=> ($action == 'edit' && !$submit) ? (($ad_data['ad_time_end']) ? date('d F Y', $ad_data['ad_time_end']) : '') : (($ad_time_end) ? date('d F Y', $ad_time_end) : ''),
 							'AD_VIEWS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_views'] : request_var('ad_views', 0),
 							'AD_CLICKS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_clicks'] : request_var('ad_clicks', 0),
 							'AD_PRIORITY'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
@@ -358,7 +369,6 @@ class acp_ads
 						$db->sql_query('DELETE FROM ' . ADS_IN_POSITIONS_TABLE . ' WHERE ad_id = ' . $ad_id);
 						$cache->destroy('sql', ADS_FORUMS_TABLE);
 						$cache->destroy('sql', ADS_GROUPS_TABLE);
-						$cache->destroy('sql', ADS_IN_POSITIONS_TABLE);
 
 						trigger_error($user->lang['DELETE_AD_SUCCESS'] . adm_back_link($this->u_action));
 					}
@@ -430,7 +440,9 @@ class acp_ads
 						$template->assign_block_vars('ads', array(
 							'AD_ID'			=> $row['ad_id'],
 							'AD_NAME'		=> $row['ad_name'],
-							'AD_ENABLED'	=> ($row['ad_enabled']) ? $user->lang['TRUE'] : $user->lang['FALSE'],
+							'AD_NOTE'		=> nl2br($row['ad_note']),
+							'AD_TIME'		=> ($row['ad_time']) ? date('Y-m-d', $row['ad_time']) : $user->lang['NA'],
+							'AD_ENABLED'	=> ($row['ad_enabled']) ? $user->lang['TRUE'] : '<strong>' . $user->lang['FALSE'] . '</strong>',
 							'AD_VIEWS'		=> $row['ad_views'],
 							'AD_CLICKS'		=> ($row['ad_clicks']) ? $row['ad_clicks'] : $user->lang['0_OR_NA'],
 

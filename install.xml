@@ -61,6 +61,10 @@
 				<rev-version>1.0.4</rev-version>
 				<changelog lang="en">
 					<change>Updating the install instructions to be simpler and more compatible.</change>
+					<change>The forum selection list is now hidden by javascript if/when the all forums checkbox is checked.</change>
+					<change>Adding a record of when an advertisement was created viewable in the ACP (this will say N/A for ads created before updating to 1.0.4).</change>
+					<change>Adding the option to display ads until a certain date or for a certain number of days.</change>
+					<change>Adding the option to save note(s) along with the advertisement which are visible in the ACP.</change>
 				</changelog>
 			</entry>
 		</history>
@@ -84,7 +88,6 @@ define('ADS_IN_POSITIONS_TABLE',	$table_prefix . 'ads_in_positions');
 define('ADS_POSITIONS_TABLE',		$table_prefix . 'ads_positions');</action>
 			</edit>
 		</open>
-
 		<open src="includes/functions.php">
 			<edit>
 				<find><![CDATA[	// Which timezone?

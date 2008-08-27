@@ -56,6 +56,10 @@
 				<dt><label for="ad_code">{L_AD_CODE}:</label><br /><span>{L_AD_CODE_EXPLAIN}</span></dt>
 				<dd><textarea id="ad_code" name="ad_code" rows="5" cols="45">{AD_CODE}</textarea></dd>
 			</dl>
+			<dl>
+				<dt><label for="ad_note">{L_AD_NOTE}:</label><br /><span>{L_AD_NOTE_EXPLAIN}</span></dt>
+				<dd><textarea id="ad_note" name="ad_note" rows="5" cols="45">{AD_NOTE}</textarea></dd>
+			</dl>
 			<!-- IF S_EDIT_AD -->
 			<dl>
 				<dt><label for="ad_views">{L_AD_VIEWS}:</label><br /><span>{L_AD_VIEWS_EXPLAIN}</span></dt>
@@ -73,6 +77,10 @@
 			<dl>
 				<dt><label for="ad_enabled">{L_AD_ENABLED}:</label><br /><span>{L_AD_ENABLED_EXPLAIN}</span></dt>
 				<dd><input type="checkbox" class="radio" name="ad_enabled" value="1"<!-- IF AD_ENABLED --> checked="checked"<!-- ENDIF --> /></dd>
+			</dl>
+			<dl>
+				<dt><label for="ad_time_end">{L_AD_TIME_END}:</label><br /><span>{L_AD_TIME_END_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_time_end" name="ad_time_end" size="25" maxlength="20" value="{AD_TIME_END}" /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_positions">{L_AD_POSITIONS}:</label><br /><span>{L_AD_POSITIONS_EXPLAIN}</span></dt>
@@ -96,6 +104,10 @@
 			<!-- ENDIF -->
 			<!-- IF S_RULES_FORUMS -->
 			<dl>
+				<dt><label for="all_forums">{L_ALL_FORUMS}:</label><br /><span>{L_ALL_FORUMS_EXPLAIN}</span></dt>
+				<dd><input type="checkbox" class="radio" id="all_forums" name="all_forums" value="1"<!-- IF ALL_FORUMS --> checked="checked"<!-- ENDIF --> onclick="switch_forum_box();" /></dd>
+			</dl>
+			<dl id="ad_forums_box">
 				<dt><label for="ad_forums">{L_AD_FORUMS}:</label><br /><span>{L_AD_FORUMS_EXPLAIN}</span></dt>
 				<dd><select id="ad_forums" name="ad_forums[]" multiple="yes" size="8">
 					<!-- BEGIN forums -->
@@ -104,12 +116,24 @@
 					</select>
 				</dd>
 			</dl>
-			<dl>
-				<dt><label for="all_forums">{L_ALL_FORUMS}:</label><br /><span>{L_ALL_FORUMS_EXPLAIN}</span></dt>
-				<dd><input type="checkbox" class="radio" name="all_forums" value="1"<!-- IF ALL_FORUMS --> checked="checked"<!-- ENDIF --> /></dd>
-			</dl>
 			<!-- ENDIF -->
 		</fieldset>
+
+		<script type="text/javascript">
+		window.onload = switch_forum_box();
+
+		function switch_forum_box()
+		{
+			if (document.getElementById('all_forums').checked == true)
+			{
+				document.getElementById('ad_forums_box').style.display = 'none';
+			}
+			else
+			{
+				document.getElementById('ad_forums_box').style.display = 'block';
+			}
+		}
+		</script>
 	<!-- ENDIF -->
 
 	<!-- IF S_EDIT_POSITION -->
@@ -149,7 +173,7 @@
 	<!-- BEGIN positions -->
 		<tr class="<!-- IF positions.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
 			<td><strong>{positions.POSITION_NAME}</strong></td>
-			<td>{positions.POSITION_CODE}</td>
+			<td style="text-align: center;">{positions.POSITION_CODE}</td>
 			<td style="text-align: center;"><a href="{positions.U_EDIT}">{L_EDIT}</a> | <a href="{positions.U_DELETE}">{L_DELETE}</a></td>
 		</tr>
 	<!-- BEGINELSE -->
@@ -179,19 +203,26 @@
 		<th style="width: 100px">{L_AD_ENABLED}</th>
 		<th style="width: 100px">{L_AD_VIEWS}</th>
 		<th style="width: 100px">{L_AD_CLICKS}</th>
+		<th style="width: 100px">{L_AD_CREATED}</th>
 		<th>{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN ads -->
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
 			<td><strong>{ads.AD_NAME}</strong></td>
-			<td>{ads.AD_ENABLED}</td>
-			<td>{ads.AD_VIEWS}</td>
-			<td>{ads.AD_CLICKS}</td>
+			<td style="text-align: center;">{ads.AD_ENABLED}</td>
+			<td style="text-align: center;">{ads.AD_VIEWS}</td>
+			<td style="text-align: center;">{ads.AD_CLICKS}</td>
+			<td style="text-align: center;">{ads.AD_TIME}</td>
 			<td style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
 		</tr>
+		<!-- IF ads.AD_NOTE -->
+		<tr>
+			<td colspan="6" class="row3">{ads.AD_NOTE}</td>
+		</tr>
+		<!-- ENDIF -->
 	<!-- BEGINELSE -->
 		<tr>
-			<td colspan="5" class="row3">{L_NO_ADS_CREATED}</td>
+			<td colspan="6" class="row3">{L_NO_ADS_CREATED}</td>
 		</tr>
 	<!-- END ads -->
 	</tbody>

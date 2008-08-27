@@ -83,6 +83,11 @@ switch ($config['ads_version'])
 		set_config('ads_accurate_views', 0);
 	case '1.0.1' :
 	case '1.0.2' :
+	case '1.0.3' :
+		$db_tool->sql_column_add(ADS_TABLE, 'ad_note', array('MTEXT_UNI', ''));
+		$db_tool->sql_column_add(ADS_TABLE, 'ad_time', array('TIMESTAMP', 0));
+		$db_tool->sql_column_add(ADS_TABLE, 'ad_time_end', array('TIMESTAMP', 0));
+		set_config('ads_last_cron', 0, true);
 }
 
 set_config('ads_version', $ads_version);

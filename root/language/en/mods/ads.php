@@ -4,7 +4,7 @@
 * @package phpBB3 Advertisement Management
 * @version $Id$
 * @copyright (c) 2008 EXreaction, Lithium Studios
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License 
+* @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -59,6 +59,7 @@ $lang = array_merge($lang, array(
 	'ADS_COUNT_CLICKS_EXPLAIN'					=> 'If set to no, advertisement clicks will not be counted (less server load).',
 	'ADS_COUNT_VIEWS'							=> 'Count Ad Views',
 	'ADS_COUNT_VIEWS_EXPLAIN'					=> 'If set to no, advertisement views will not be counted (less server load).',
+	'AD_CREATED'								=> 'Ad Created',
 	'ADS_ENABLE'								=> 'Enable Advertisements',
 	'ADS_RULES_FORUMS'							=> 'Use Forum Rules for Ads',
 	'ADS_RULES_FORUMS_EXPLAIN'					=> 'If enabled, it allows you to control which forums each advertisement is displayed in.  If you do not plan on using this you should set this to no so it uses less resources.',
@@ -85,10 +86,15 @@ $lang = array_merge($lang, array(
 	'AD_NAME'									=> 'Ad Name',
 	'AD_NAME_EXPLAIN'							=> 'This is only used for your recognition of the ad.',
 	'AD_NOT_EXIST'								=> 'The selected advertisement does not exist.',
+	'AD_NOTE'									=> 'Ad Notes',
+	'AD_NOTE_EXPLAIN'							=> 'Enter any notes for this advertisement if you\'d like.  These notes are not shown anywhere except in the ACP.',
 	'AD_POSITIONS'								=> 'Positions',
 	'AD_POSITIONS_EXPLAIN'						=> 'Select the positions where you would like this advertisement to show.',
 	'AD_PRIORITY'								=> 'Ad Priority',
 	'AD_PRIORITY_EXPLAIN'						=> 'The higher the number the more likely the advertisement will be displayed.  For example, an ad with a priority of 2 will be 2x as likely as an ad with a priority of 1 to be shown, 3 would be 3x as likely, etc, etc.',
+	'AD_TIME_END'								=> 'Run until',
+	'AD_TIME_END_BEFORE_NOW'					=> 'The end time you entered is before the time right now.  Please make sure you are using a strtotime compatible date.',
+	'AD_TIME_END_EXPLAIN'						=> 'Enter a valid date to end the advertisement at.  After the entered time the ad will be disabled automatically.  Note that this uses the PHP <a href="http://us2.php.net/manual/en/function.strtotime.php">strtotime</a> function, so be sure to format it correctly or it will not be set.<br /><br /><strong>This end date is not entirely accurate with timezones and such, so exact times should not be relied on.  It is recommended that you plan on an accuracy of within 1 day of the given time.</strong>',
 	'AD_VIEWS'									=> 'Ad Views',
 	'AD_VIEWS_EXPLAIN'							=> 'The current number of views of this advertisement.',
 	'ALL_FORUMS_EXPLAIN'						=> 'Select to show in all forums.',
