@@ -193,7 +193,7 @@ class acp_ads
 							'ad_name'			=> $ad_name,
 							'ad_code'			=> $ad_code,
 							'ad_note'			=> $ad_note,
-							'ad_time'			=> time(),
+							'ad_time'			=> ($action == 'edit') ? $ad_data['ad_time'] : time(),
 							'ad_time_end'		=> ($ad_time_end !== false && $ad_time_end > 0) ? $ad_time_end : 0,
 							'ad_views'			=> request_var('ad_views', 0),
 							'ad_clicks'			=> request_var('ad_clicks', 0),
