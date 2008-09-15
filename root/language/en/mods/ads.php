@@ -99,7 +99,7 @@ $lang = array_merge($lang, array(
 	'AD_TIME_END_EXPLAIN'						=> 'Enter a valid date to end the advertisement at.  After the entered time the ad will be disabled automatically.  Note that this uses the PHP <a href="http://us2.php.net/manual/en/function.strtotime.php">strtotime</a> function, so be sure to format it correctly or it will not be set.<br /><br /><strong>This end date is not entirely accurate with timezones and such, so exact times should not be relied on.  It is recommended that you plan on an accuracy of within 1 day of the given time.</strong>',
 	'AD_VIEWS'									=> 'Ad Views',
 	'AD_VIEWS_EXPLAIN'							=> 'The current number of views of this advertisement.',
-	'ALL_FORUMS_EXPLAIN'						=> 'Select to show in all forums.',
+	'ALL_FORUMS_EXPLAIN'						=> 'Select to show in all forums and pages.  Note that if this is unchecked the advertisement will not show on non-forum related pages (like the FAQ page for example).',
 
 	'CREATE_AD'									=> 'Create Ad',
 	'CREATE_POSITION'							=> 'Create Position',
