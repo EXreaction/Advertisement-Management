@@ -34,8 +34,8 @@ require($phpbb_root_path . 'includes/cache.' . $phpEx);
 require($phpbb_root_path . 'includes/constants.' . $phpEx);
 require($phpbb_root_path . 'includes/db/' . $dbms . '.' . $phpEx);
 
-$cache		= new cache();
-$db			= new $sql_db();
+$cache = new cache();
+$db = new $sql_db();
 
 // Connect to DB
 $db->sql_connect($dbhost, $dbuser, $dbpasswd, $dbname, $dbport, false, defined('PHPBB_DB_NEW_LINK') ? PHPBB_DB_NEW_LINK : false);
@@ -141,5 +141,8 @@ if (sizeof($available_ads))
 		$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ad_id = ' . $ad_id);
 	}
 }
+
+garbage_collection();
+exit_handler();
 
 ?>

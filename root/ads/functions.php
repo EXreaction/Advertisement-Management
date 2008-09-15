@@ -22,6 +22,8 @@ function setup_ads()
 {
 	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user, $forum_id;
 
+	$user->add_lang('mods/ads');
+
 	$ads_version = '1.0.4';
 
 	// Automatically install or update if required
@@ -136,6 +138,15 @@ function setup_ads()
 			$template->assign_vars(array(
 				'ADS_' . $position_id		=> $code,
 			));
+		}
+
+		if (isset($template->_tpldata['.'][0]['ADS_8']))
+		{
+			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
+		}
+		else
+		{
+			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
 		}
 
 		if ($config['ads_count_views'] && !$config['ads_accurate_views'])
