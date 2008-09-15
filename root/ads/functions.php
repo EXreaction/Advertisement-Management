@@ -24,7 +24,7 @@ function setup_ads()
 
 	$user->add_lang('mods/ads');
 
-	$ads_version = '1.0.4';
+	$ads_version = '1.0.5';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
