@@ -7,7 +7,7 @@
 		<title lang="en">Advertisement Management</title>
 		<description lang="en">Adds an easy to use Advertisement Manager to a phpBB3 forum.</description>
 
-		<author-notes lang="en"></author-notes>
+		<author-notes lang="en">Support is only given at my website, http://www.lithiumstudios.org</author-notes>
 
 		<author-group>
 			<author>
@@ -18,7 +18,7 @@
 			</author>
 		</author-group>
 
-		<mod-version>1.0.4</mod-version>
+		<mod-version>1.0.5</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -30,5 +30,17 @@
 		<copy>
 			<file from="root/*.*" to="*.*"/>
 		</copy>
+		<open src="styles/prosilver/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE ads/ads.js -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/overall_header.html">
+			<edit>
+				<find><![CDATA[</head>]]></find>
+				<action type="before-add"><![CDATA[<!-- INCLUDE ads/ads.js -->]]></action>
+			</edit>
+		</open>
 	</action-group>
 </mod>

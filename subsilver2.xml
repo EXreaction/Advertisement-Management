@@ -18,7 +18,7 @@
 			</author>
 		</author-group>
 
-		<mod-version>1.0.4</mod-version>
+		<mod-version>1.0.5</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -30,11 +30,11 @@
 		<open src="styles/subsilver2/template/overall_footer.html">
 			<edit>
 				<find><![CDATA[</div>]]></find>
-				<action type="after-add"><![CDATA[{ADS_7}<br /><br />]]></action>
+				<action type="after-add"><![CDATA[<!-- IF ADS_7 -->{ADS_7}<br /><br /><!-- ENDIF -->]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[</body>]]></find>
-				<action type="before-add"><![CDATA[<br />{ADS_8}]]></action>
+				<action type="before-add"><![CDATA[<!-- IF ADS_8 --><br />{ADS_8}<!-- ENDIF -->]]></action>
 			</edit>
 		</open>
 		<open src="styles/subsilver2/template/overall_header.html">
@@ -44,17 +44,17 @@
 			</edit>
 			<edit>
 				<find><![CDATA[<div id="wrapheader">]]></find>
-				<action type="after-add"><![CDATA[	{ADS_1}<br />]]></action>
+				<action type="after-add"><![CDATA[	<!-- IF {ADS_1} -->{ADS_1}<br /><!-- ENDIF -->]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[<div id="wrapcentre">]]></find>
-				<action type="before-add"><![CDATA[{ADS_2}<br />]]></action>
+				<action type="before-add"><![CDATA[<!-- IF ADS_2 -->{ADS_2}<br /><!-- ENDIF -->]]></action>
 			</edit>
 		</open>
 		<open src="styles/subsilver2/template/viewtopic_body.html">
 			<edit>
 				<find><![CDATA[<div id="pagecontent">]]></find>
-				<action type="before-add"><![CDATA[{ADS_3}<br />]]></action>
+				<action type="before-add"><![CDATA[<!-- IF ADS_3 -->{ADS_3}<br /><!-- ENDIF -->]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[<!-- END postrow -->]]></find>
@@ -63,7 +63,7 @@
 			</edit>
 			<edit>
 				<find><![CDATA[<div id="pagefooter"></div>]]></find>
-				<action type="before-add"><![CDATA[{ADS_4}<br />]]></action>
+				<action type="before-add"><![CDATA[<!-- IF ADS_4 -->{ADS_4}<br /><!-- ENDIF -->]]></action>
 			</edit>
 		</open>
 	</action-group>
