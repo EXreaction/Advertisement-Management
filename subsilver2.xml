@@ -44,7 +44,7 @@
 			</edit>
 			<edit>
 				<find><![CDATA[<div id="wrapheader">]]></find>
-				<action type="after-add"><![CDATA[	<!-- IF {ADS_1} -->{ADS_1}<br /><!-- ENDIF -->]]></action>
+				<action type="after-add"><![CDATA[	<!-- IF ADS_1 -->{ADS_1}<br /><!-- ENDIF -->]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[<div id="wrapcentre">]]></find>
