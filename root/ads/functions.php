@@ -24,7 +24,8 @@ function setup_ads()
 
 	$user->add_lang('mods/ads');
 
-	$ads_version = '1.0.5';
+	// remember to update in ads/update.php file!
+	$ads_version = '1.0.6';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
@@ -154,5 +155,8 @@ function setup_ads()
 			$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ' . $db->sql_in_set('ad_id', $id_list));
 		}
 	}
+
+	$template->assign_var('ADS_CLICK_FILE', $phpbb_root_path . 'ads/click.' . $phpEx);
+	$template->assign_var('ADS_VIEW_FILE', $phpbb_root_path . 'ads/view.' . $phpEx);
 }
 ?>

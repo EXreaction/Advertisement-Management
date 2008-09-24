@@ -2,12 +2,12 @@
 
 	function countAdClick(id)
 	{
-	   loadXMLDoc('{ROOT_PATH}ads/click.php?a=' + id);
+	   loadXMLDoc('{ADS_CLICK_FILE}?a=' + id);
 	}
 
 	function countAdView(id)
 	{
-	   loadXMLDoc('{ROOT_PATH}ads/view.php?a=' + id);
+	   loadXMLDoc('{ADS_VIEW_FILE}?a=' + id);
 	}
 
 	function loadXMLDoc(url) {

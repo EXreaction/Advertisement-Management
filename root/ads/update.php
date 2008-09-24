@@ -13,6 +13,10 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 	exit;
 }
 
+// We are setting this again because it seems some people have problems uploading all files
+// When update time comes and the new update file is not uploaded, the version in the database is set to the version in the ads/functions.php file which may differ from the version of this file.
+$ads_version = '1.0.6';
+
 // Setup some stuff we will need.
 global $dbms, $dbmd;
 include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
@@ -88,6 +92,8 @@ switch ($config['ads_version'])
 		$db_tool->sql_column_add(ADS_TABLE, 'ad_time', array('TIMESTAMP', 0));
 		$db_tool->sql_column_add(ADS_TABLE, 'ad_time_end', array('TIMESTAMP', 0));
 		set_config('ads_last_cron', 0, true);
+	case '1.0.4' :
+	case '1.0.5' :
 }
 
 set_config('ads_version', $ads_version);
