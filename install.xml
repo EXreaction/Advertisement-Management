@@ -18,7 +18,7 @@
 			</author>
 		</author-group>
 
-		<mod-version>1.0.5</mod-version>
+		<mod-version>1.0.6</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -73,6 +73,14 @@
 				<changelog lang="en">
 					<change>Fixing an issue in the ACP template with RTL languages.</change>
 					<change>Updating the prosilver install code to have the nicer layout for some positions.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2008-09-23</date>
+				<rev-version>1.0.6</rev-version>
+				<changelog lang="en">
+					<change>Fixing the hard codded .php in ads.js</change>
+					<change>Closing the db connection as what should have been done to start with in ads/view.php and ads/click.php</change>
 				</changelog>
 			</entry>
 		</history>
