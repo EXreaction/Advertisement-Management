@@ -133,7 +133,7 @@ if (sizeof($available_ads))
 
 	$code = htmlspecialchars_decode($row['ad_code']);
 	$code = ($config['ads_count_clicks']) ? str_replace(array('{COUNT_CLICK}', '{COUNT_CLICKS}'), ' onclick="countAdClick(' . $ad_id . ');"', $code) : $code;
-	//$code = ($config['ads_accurate_views']) ? '<img src="' . $phpbb_root_path . 'images/spacer.gif" onload="countAdView(' . $ad_id . ');" />' . $code : $code;
+	//$code = ($config['ads_accurate_views']) ? '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code : $code;
 
 	echo $code;
 
