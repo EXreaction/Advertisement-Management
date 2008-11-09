@@ -15,52 +15,77 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 
 // We are setting this again because it seems some people have problems uploading all files
 // When update time comes and the new update file is not uploaded, the version in the database is set to the version in the ads/functions.php file which may differ from the version of this file.
-$ads_version = '1.0.6';
+$ads_version = '1.0.7';
 
-// Setup some stuff we will need.
-global $dbms, $dbmd;
-include($phpbb_root_path . 'includes/functions_admin.' . $phpEx); // Needed for remove_comments function for some DB types
-include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
+include($phpbb_root_path . 'umif/umif.' . $phpEx);
+$umif = new $umif;
 
-if (!class_exists('phpbb_db_tools'))
+if (!$umif->config_exists('ads_version'))
 {
-	include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-}
-
-if (!class_exists('auth_admin'))
-{
-	include($phpbb_root_path . 'includes/acp/auth.' . $phpEx);
-}
-
-if (!class_exists('eami'))
-{
-	include($phpbb_root_path . 'ads/eami.' . $phpEx);
-}
-$auth_admin = new auth_admin();
-$db_tool = new phpbb_db_tools($db);
-$dbmd = get_available_dbms($dbms);
-$eami = new eami();
-
-// Install the base if required.  If there are updates/additions in the future, DO NOT add the additions to this part.
-if (!isset($config['ads_version']))
-{
-	// Add the tables
-	run_file_queries($phpbb_root_path . 'ads/schemas/');
-
-	// Add the permissions
-	$auth_admin->acl_add_option(array(
-		'local'		=> array(),
-		'global'	=> array('a_ads'),
+	$umif->table_add(ADS_TABLE, array(
+		'COLUMNS'		=> array(
+			'ad_id'			=> array('UINT', NULL, 'auto_increment'),
+			'ad_time'		=> array('TIMESTAMP', 0),
+			'ad_time_end'	=> array('TIMESTAMP', 0),
+			'ad_name'		=> array('VCHAR', ''),
+			'ad_code'		=> array('TEXT_UNI', ''),
+			'ad_views'		=> array('UINT', 0),
+			'ad_clicks'		=> array('UINT', 0),
+			'ad_priority'	=> array('TINT:1', 5),
+			'ad_enabled'	=> array('BOOL', 1),
+			'all_forums'	=> array('BOOL', 0),
+			'ad_note'		=> array('MTEXT_UNI', ''),
+		),
+		'PRIMARY_KEY'	=> 'ad_id',
 	));
 
-	// Add the modules
-	$sql_ary = array(
-		'module_basename'	=> 'ads',
-		'module_langname'	=> 'ACP_ADVERTISEMENT_MANAGEMENT',
-		'module_mode'		=> 'default',
-		'module_auth'		=> 'acl_a_ads',
-	);
-	$eami->add_module('acp', 'ACP_BOARD_CONFIGURATION', $sql_ary);
+	$umif->table_add(ADS_FORUMS_TABLE, array(
+		'COLUMNS'		=> array(
+			'ad_id'			=> array('UINT', 0),
+			'forum_id'		=> array('UINT', 0),
+		),
+		'KEYS'			=> array(
+			'ad_forum'		=> array('INDEX', array('ad_id', 'forum_id')),
+		),
+	));
+
+	$umif->table_add(ADS_GROUPS_TABLE, array(
+		'COLUMNS'		=> array(
+			'ad_id'			=> array('UINT', 0),
+			'group_id'		=> array('UINT', 0),
+		),
+		'KEYS'			=> array(
+			'ad_group'		=> array('INDEX', array('ad_id', 'group_id')),
+		),
+	));
+
+	$umif->table_add(ADS_IN_POSITIONS_TABLE, array(
+		'COLUMNS'		=> array(
+			'ad_id'			=> array('UINT', 0),
+			'position_id'	=> array('UINT', 0),
+			'ad_priority'	=> array('TINT:1', 5),
+			'ad_enabled'	=> array('BOOL', 1),
+			'all_forums'	=> array('BOOL', 0),
+		),
+		'KEYS'			=> array(
+			'ad_position'	=> array('INDEX', array('ad_id', 'position_id')),
+			'ad_priority'	=> array('INDEX', 'ad_priority'),
+			'ad_enabled'	=> array('INDEX', 'ad_enabled'),
+			'all_forums'	=> array('INDEX', 'all_forums'),
+		),
+	));
+
+	$umif->table_add(ADS_POSITIONS_TABLE, array(
+		'COLUMNS'		=> array(
+			'position_id'	=> array('UINT', NULL, 'auto_increment'),
+			'lang_key'		=> array('TEXT_UNI', ''),
+		),
+		'PRIMARY_KEY'	=> 'position_id',
+	));
+
+	$umif->permission_add('a_ads', true);
+
+	$umif->module_add('acp', 'ACP_BOARD_CONFIGURATION', array('module_basename' => 'ads'));
 
 	// Insert the default positions
 	$positions = array('ABOVE_HEADER', 'BELOW_HEADER', 'ABOVE_POSTS', 'BELOW_POSTS', 'AFTER_FIRST_POST', 'AFTER_EVERY_POST', 'ABOVE_FOOTER', 'BELOW_FOOTER');
@@ -69,79 +94,42 @@ if (!isset($config['ads_version']))
 		$db->sql_query('INSERT INTO ' . ADS_POSITIONS_TABLE . ' ' . $db->sql_build_array('INSERT', array('lang_key' => $position)));
 	}
 
-	// Add the config settings
-	set_config('ads_enable', 1);
-	set_config('ads_rules_forums', 1);
-	set_config('ads_rules_groups', 1);
-	set_config('ads_version', '1.0.0'); // Do not change this!
+	$umif->config_add('ads_enable', 1);
+	$umif->config_add('ads_rules_forums', 1);
+	$umif->config_add('ads_rules_groups', 1);
+	$umif->config_add('ads_count_clicks', 1);
+	$umif->config_add('ads_count_views', 1);
+	$umif->config_add('ads_accurate_views', 0);
+	$umif->config_add('ads_last_cron', 0, true);
+	$umif->config_add('ads_version', $ads_version);
+	
+	$umif->cache_purge();
 }
-
-// No breaks!
-switch ($config['ads_version'])
+else
 {
-	case '0.7.0' :
-	case '1.0.0' :
-		$db_tool->sql_column_add(ADS_TABLE, 'ad_clicks', array('UINT', 0));
-		set_config('ads_count_clicks', 1);
-		set_config('ads_count_views', 1);
-		set_config('ads_accurate_views', 0);
-	case '1.0.1' :
-	case '1.0.2' :
-	case '1.0.3' :
-		$db_tool->sql_column_add(ADS_TABLE, 'ad_note', array('MTEXT_UNI', ''));
-		$db_tool->sql_column_add(ADS_TABLE, 'ad_time', array('TIMESTAMP', 0));
-		$db_tool->sql_column_add(ADS_TABLE, 'ad_time_end', array('TIMESTAMP', 0));
-		set_config('ads_last_cron', 0, true);
-	case '1.0.4' :
-	case '1.0.5' :
-}
-
-set_config('ads_version', $ads_version);
-
-$cache->purge();
-
-/**
-* Run Queries from file
-*/
-function run_file_queries($dir)
-{
-	global $db, $dbmd, $dbms, $table_prefix;
-
-	if ($dbms == 'mysql' || $dbms == 'mysqli')
+	// No breaks!
+	switch ($config['ads_version'])
 	{
-		if ($dbms == 'mysqli' || version_compare($db->mysql_version, '4.1.3', '>='))
-		{
-			$dbms_schema = 'mysql_41_schema.sql';
-		}
-		else
-		{
-			$dbms_schema = 'mysql_40_schema.sql';
-		}
-	}
-	else
-	{
-		$dbms_schema = $dbms . '_schema.sql';
+		case '0.7.0' :
+		case '1.0.0' :
+			$db_tool->sql_column_add(ADS_TABLE, 'ad_clicks', array('UINT', 0));
+			$umif->config_add('ads_count_clicks', 1);
+			$umif->config_add('ads_count_views', 1);
+			$umif->config_add('ads_accurate_views', 0);
+		case '1.0.1' :
+		case '1.0.2' :
+		case '1.0.3' :
+			$db_tool->sql_column_add(ADS_TABLE, 'ad_note', array('MTEXT_UNI', ''));
+			$db_tool->sql_column_add(ADS_TABLE, 'ad_time', array('TIMESTAMP', 0));
+			$db_tool->sql_column_add(ADS_TABLE, 'ad_time_end', array('TIMESTAMP', 0));
+			$umif->config_add('ads_last_cron', 0, true);
+		case '1.0.4' :
+		case '1.0.5' :
+		case '1.0.6' :
 	}
 
-	if (!file_exists($dir . $dbms_schema))
-	{
-		trigger_error('SCHEMA_NOT_EXIST');
-	}
+	$umif->config_update('ads_version', $ads_version);
 
-	$remove_remarks = $dbmd[$dbms]['COMMENTS'];
-	$delimiter = $dbmd[$dbms]['DELIM'];
-
-	$sql_query = @file_get_contents($dir . $dbms_schema);
-
-	$sql_query = preg_replace('#phpbb_#i', $table_prefix, $sql_query);
-
-	$remove_remarks($sql_query);
-
-	$sql_query = split_sql_file($sql_query, $delimiter);
-
-	foreach ($sql_query as $sql)
-	{
-		$db->sql_query($sql);
-	}
+	$umif->cache_purge();
 }
 ?>

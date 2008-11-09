@@ -32,6 +32,7 @@ require($phpbb_root_path . 'config.' . $phpEx);
 require($phpbb_root_path . 'includes/acm/acm_' . $acm_type . '.' . $phpEx);
 require($phpbb_root_path . 'includes/cache.' . $phpEx);
 require($phpbb_root_path . 'includes/constants.' . $phpEx);
+require($phpbb_root_path . 'ads/constants.' . $phpEx);
 require($phpbb_root_path . 'includes/db/' . $dbms . '.' . $phpEx);
 require($phpbb_root_path . 'includes/functions.' . $phpEx);
 

@@ -20,7 +20,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</author>
 		</author-group>
 
-		<mod-version>1.0.6</mod-version>
+		<mod-version>1.0.7</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -85,6 +85,14 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 					<change>Closing the db connection as what should have been done to start with in ads/view.php and ads/click.php</change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2008-11-09</date>
+				<rev-version>1.0.7</rev-version>
+				<changelog lang="en">
+					<change>Updating the install script and adding a remove script.</change>
+					<change>Moving the constants to a separate file (too many errors have come from users not editing the constants file).</change>
+				</changelog>
+			</entry>
 		</history>
 
 	<link-group>
@@ -96,17 +104,6 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 		<copy>
 			<file from="root/*.*" to="*.*"/>
 		</copy>
-		<open src="includes/constants.php">
-			<edit>
-				<find><![CDATA[// Additional tables]]></find>
-				<action type="after-add"><![CDATA[// Advertisement Management
-define('ADS_TABLE',					$table_prefix . 'ads');
-define('ADS_FORUMS_TABLE',			$table_prefix . 'ads_forums');
-define('ADS_GROUPS_TABLE',			$table_prefix . 'ads_groups');
-define('ADS_IN_POSITIONS_TABLE',	$table_prefix . 'ads_in_positions');
-define('ADS_POSITIONS_TABLE',		$table_prefix . 'ads_positions');]]></action>
-			</edit>
-		</open>
 		<open src="includes/functions.php">
 			<edit>
 				<find><![CDATA[	// Which timezone?

@@ -13,6 +13,8 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
+require($phpbb_root_path . 'ads/constants.' . $phpEx);
+
 /**
 * Setup Advertisements
 *
@@ -25,7 +27,7 @@ function setup_ads()
 	$user->add_lang('mods/ads');
 
 	// remember to update in ads/update.php file!
-	$ads_version = '1.0.6';
+	$ads_version = '1.0.7';
 
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
