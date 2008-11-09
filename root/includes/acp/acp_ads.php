@@ -29,6 +29,8 @@ class acp_ads
 		global $db, $user, $auth, $template;
 		global $cache, $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 
+		require($phpbb_root_path . 'ads/constants.' . $phpEx);
+
 		$user->add_lang('mods/ads');
 		$this->tpl_name = 'acp_ads';
 		$this->page_title = 'ACP_ADVERTISEMENT_MANAGEMENT';

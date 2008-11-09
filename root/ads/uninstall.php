@@ -15,6 +15,7 @@ define('IN_PHPBB', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 include($phpbb_root_path . 'common.' . $phpEx);
+require($phpbb_root_path . 'ads/constants.' . $phpEx);
 
 // Start session management
 $user->session_begin();
@@ -22,10 +23,12 @@ $auth->acl($user->data);
 $user->setup('mods/info_acp_ads');
 
 include($phpbb_root_path . 'umif/umif_frontend.' . $phpEx);
-$umif = new $umif_frontend('ACP_ADVERTISEMENT_MANAGEMENT', true);
+$umif = new umif_frontend('ACP_ADVERTISEMENT_MANAGEMENT', true);
 
 if ($umif->confirm_box(true))
 {
+	$umif->display_stages(array('CONFIRM', 'UNINSTALL'), 2);
+
 	$umif->table_remove(ADS_TABLE);
 
 	$umif->table_remove(ADS_FORUMS_TABLE);
@@ -53,6 +56,10 @@ if ($umif->confirm_box(true))
 }
 else
 {
+	$umif->display_stages(array('CONFIRM', 'UNINSTALL'));
+
 	$umif->confirm_box(false, 'UNINSTALL');
 }
+
+$umif->done();
 ?>

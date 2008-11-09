@@ -10,6 +10,8 @@
 
 if (!defined('ADS_TABLE'))
 {
+	global $table_prefix;
+
 	define('ADS_TABLE',					$table_prefix . 'ads');
 	define('ADS_FORUMS_TABLE',			$table_prefix . 'ads_forums');
 	define('ADS_GROUPS_TABLE',			$table_prefix . 'ads_groups');

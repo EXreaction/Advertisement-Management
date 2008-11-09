@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB') || !isset($ads_version))
 $ads_version = '1.0.7';
 
 include($phpbb_root_path . 'umif/umif.' . $phpEx);
-$umif = new $umif;
+$umif = new umif;
 
 if (!$umif->config_exists('ads_version'))
 {
