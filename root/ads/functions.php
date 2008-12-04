@@ -26,13 +26,21 @@ function setup_ads()
 
 	$user->add_lang('mods/ads');
 
-	// remember to update in ads/update.php file!
-	$ads_version = '1.0.7';
-
 	// Automatically install or update if required
-	if (!isset($config['ads_version']) || $config['ads_version'] != $ads_version)
+	if (!isset($config['ads_version']) || $config['ads_version'] != '1.0.7')
 	{
-		require($phpbb_root_path . 'ads/update.' . $phpEx);
+		if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
+		{
+			trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+		}
+
+		include($phpbb_root_path . 'umil/umil.' . $phpEx);
+		$umil = new umil(true);
+
+		include($phpbb_root_path . 'ads/versions.' . $phpEx);
+
+		$umil->run_actions('update', $versions, 'ads_version');
+		unset($versions);
 	}
 
 	if (!$config['ads_enable'])

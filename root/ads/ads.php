@@ -48,7 +48,7 @@ unset($dbpasswd);
 // Grab global variables, re-cache if necessary
 $config = $cache->obtain_config();
 
-if (!$config['ads_enable'])
+if (!isset($config['ads_enable']) || !$config['ads_enable'])
 {
 	exit;
 }
