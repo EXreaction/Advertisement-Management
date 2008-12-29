@@ -131,7 +131,7 @@ function ads_install($action, $version)
 	$positions = array('ABOVE_HEADER', 'BELOW_HEADER', 'ABOVE_POSTS', 'BELOW_POSTS', 'AFTER_FIRST_POST', 'AFTER_EVERY_POST', 'ABOVE_FOOTER', 'BELOW_FOOTER');
 	foreach ($positions as $position)
 	{
-		$db->sql_query('INSERT INTO ' . $table_prefix . 'ads_in_positions ' . $db->sql_build_array('INSERT', array('lang_key' => $position)));
+		$db->sql_query('INSERT INTO ' . $table_prefix . 'ads_positions ' . $db->sql_build_array('INSERT', array('lang_key' => $position)));
 	}
 }
 
