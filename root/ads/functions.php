@@ -29,12 +29,16 @@ function setup_ads()
 	// Automatically install or update if required
 	if (!isset($config['ads_version']) || $config['ads_version'] != '1.0.7')
 	{
-		if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
+		if (!class_exists('umil'))
 		{
-			trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+			if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
+			{
+				trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+			}
+
+			include($phpbb_root_path . 'umil/umil.' . $phpEx);
 		}
 
-		include($phpbb_root_path . 'umil/umil.' . $phpEx);
 		$umil = new umil(true);
 
 		include($phpbb_root_path . 'ads/versions.' . $phpEx);
