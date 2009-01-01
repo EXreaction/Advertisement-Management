@@ -20,12 +20,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</author>
 		</author-group>
 
-		<mod-version>1.0.7</mod-version>
+		<mod-version>1.0.8</mod-version>
 
 		<installation>
 			<level>easy</level>
 			<time>300</time>
-			<target-version>3.0.2</target-version>
+			<target-version>3.0.4</target-version>
 		</installation>
 
 		<history>
@@ -91,6 +91,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<changelog lang="en">
 					<change>Updating the install script and adding a remove script.</change>
 					<change>Moving the constants to a separate file (too many errors have come from users not editing the constants file).</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2009-01-01</date>
+				<rev-version>1.0.8</rev-version>
+				<changelog lang="en">
+					<change>Updating the install scripts</change>
 				</changelog>
 			</entry>
 		</history>

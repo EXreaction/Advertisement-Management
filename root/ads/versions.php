@@ -116,6 +116,7 @@ $versions = array(
 	'1.0.5'		=> array(),
 	'1.0.6'		=> array(),
 	'1.0.7'		=> array(),
+	'1.0.8'		=> array(),
 );
 
 function ads_install($action, $version)
