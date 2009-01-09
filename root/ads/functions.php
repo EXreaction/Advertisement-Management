@@ -52,6 +52,46 @@ function setup_ads()
 		return;
 	}
 
+	$forum_id = ($forum_id) ? $forum_id : request_var('f', 0);
+	$ads = get_ads($user->data['user_id'], $forum_id);
+
+	if (sizeof($ads))
+	{
+		foreach ($ads as $position_id => $code)
+		{
+			$template->assign_vars(array(
+				'ADS_' . $position_id		=> $code,
+			));
+		}
+
+		if (isset($template->_tpldata['.'][0]['ADS_8']))
+		{
+			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
+		}
+		else
+		{
+			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
+		}
+
+		$template->assign_var('ADS_CLICK_FILE', $phpbb_root_path . 'ads/click.' . $phpEx);
+		$template->assign_var('ADS_VIEW_FILE', $phpbb_root_path . 'ads/view.' . $phpEx);
+	}
+}
+
+/**
+*  Get ads
+*
+* @param mixed $user_id
+* @param mixed $forum_id
+* @param bool $acurate_view_count true will enable the acurate view counts, false will disable them (disable when not within phpBB).
+*/
+function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
+{
+	global $config, $db;
+
+	$user_id = (int) $user_id;
+	$forum_id = (int) $forum_id;
+
 	// A built in cron-like function for disabling ads after they reach their end date.  Runs once every hour
 	if ($config['ads_last_cron'] < (time() - 3600))
 	{
@@ -76,15 +116,15 @@ function setup_ads()
 	}
 
 	// Set some variables up
-	$ads = $ignore_ads = $forum_ads = $available_ads = $id_list = array();
+	$ads = $ignore_ads = $forum_ads = $available_ads = $id_list = $return_list = array();
 
 	if ($config['ads_rules_groups'])
 	{
 		$sql = 'SELECT a.ad_id FROM ' . ADS_GROUPS_TABLE . ' a, ' . USER_GROUP_TABLE . ' ug
 			WHERE ug.user_pending = 0
-			AND ug.user_id = ' . $user->data['user_id'] . '
+			AND ug.user_id = ' . $user_id . '
 			AND a.group_id = ug.group_id';
-		$result = $db->sql_query($sql, 300); // Cache this data for 5 minutes
+		$result = $db->sql_query($sql, 60); // Cache this data for 1 minute
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$ignore_ads[] = $row['ad_id'];
@@ -92,13 +132,11 @@ function setup_ads()
 		$db->sql_freeresult($result);
 	}
 
-	if ($config['ads_rules_forums'])
+	if ($config['ads_rules_forums'] && $forum_id)
 	{
-		$forum_id = ($forum_id) ? $forum_id : request_var('f', 0);
-
 		$sql = 'SELECT ad_id FROM ' . ADS_FORUMS_TABLE . '
 			WHERE forum_id = ' . (int) $forum_id;
-		$result = $db->sql_query($sql, 300); // Cache this data for 5 minutes
+		$result = $db->sql_query($sql, 60); // Cache this data for 1 minute
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$forum_ads[] = $row['ad_id'];
@@ -148,20 +186,13 @@ function setup_ads()
 		{
 			$code = htmlspecialchars_decode($ads[$ad_id]['ad_code']);
 			$code = ($config['ads_count_clicks']) ? str_replace(array('{COUNT_CLICK}', '{COUNT_CLICKS}'), ' onclick="countAdClick(' . $ad_id . ');"', $code) : $code;
-			$code = ($config['ads_accurate_views']) ? '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code : $code;
 
-			$template->assign_vars(array(
-				'ADS_' . $position_id		=> $code,
-			));
-		}
+			if ($acurate_view_count && $config['ads_accurate_views'])
+			{
+				$code = '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code;
+			}
 
-		if (isset($template->_tpldata['.'][0]['ADS_8']))
-		{
-			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
-		}
-		else
-		{
-			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . '</div>';
+			$return_list[$position_id] = $code;
 		}
 
 		if ($config['ads_count_views'] && !$config['ads_accurate_views'])
@@ -170,7 +201,6 @@ function setup_ads()
 		}
 	}
 
-	$template->assign_var('ADS_CLICK_FILE', $phpbb_root_path . 'ads/click.' . $phpEx);
-	$template->assign_var('ADS_VIEW_FILE', $phpbb_root_path . 'ads/view.' . $phpEx);
+	return $return_list;
 }
 ?>

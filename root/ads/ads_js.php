@@ -2,27 +2,32 @@
 /**
 *
 * @package phpBB3 Advertisement Management
-* @version $Id$
+* @version $Id: ads.php 72 2008-12-04 21:36:26Z exreaction@gmail.com $
 * @copyright (c) 2008 EXreaction, Lithium Studios
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
-/**
-* Send the following variables
+/*
+* Notes:
+*  Accurate ad views does not work when linking to this file to show the ads.
+*  The URL should look something like:
+*   http://lithiumstudios.org/ads/ads.php?p=position_id&f=forum_id&u=user_id
+*  The Javascript code should look like this:
+*	<script src="http://lithiumstudios.org/ads/ads.php?p=position_id&f=forum_id&u=user_id"></script>
 *
-* $position_id
-* $forum_id
-* $user_id
+* Be warned that this won't work with certain advertisements (like ones that already output via javascript such as Adsense).
 */
-$position_id = (int) (isset($position_id)) ? $position_id : ((isset($_GET['p'])) ? $_GET['p'] : 0);
-$forum_id = (int) (isset($forum_id)) ? $forum_id : ((isset($_GET['f'])) ? $_GET['f'] : 0);
-$user_id = (int) (isset($user_id)) ? $user_id : ((isset($_GET['u'])) ? $_GET['u'] : 0);
+
+$position_id = (int) (isset($_GET['p'])) ? $_GET['p'] : 0;
+$forum_id = (int) (isset($_GET['f'])) ? $_GET['f'] : 0;
+$user_id = (int) (isset($_GET['u'])) ? $_GET['u'] : 0;
 
 if (!$position_id)
 {
 	exit;
 }
+
 
 define('IN_PHPBB', true);
 $phpbb_root_path = (defined('PHPBB_ROOT_PATH')) ? PHPBB_ROOT_PATH : '../';
@@ -53,7 +58,7 @@ $ads = get_ads($user_id, $forum_id, false);
 
 if (isset($ads[$position_id]))
 {
-	echo $ads[$position_id];
+	echo 'document.write(\'' . 	$ads[$position_id] . '\')';
 }
 
 garbage_collection();
