@@ -31,12 +31,18 @@ function setup_ads()
 	{
 		if (!class_exists('umil'))
 		{
-			if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
+			$umil_file = $phpbb_root_path . 'umil/umil.' . $phpEx;
+			if (!file_exists($umil_file))
 			{
-				trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+				$umil_file = $phpbb_root_path . 'ads/umil.' . $phpEx;
+
+				if (!file_exists($umil_file))
+				{
+					trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
+				}
 			}
 
-			include($phpbb_root_path . 'umil/umil.' . $phpEx);
+			include($umil_file);
 		}
 
 		$umil = new umil(true);

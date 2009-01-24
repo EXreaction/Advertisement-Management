@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 49 2008-12-25 01:49:22Z HighwayofLife $
+ * @version $Id: umil.php 80 2009-01-18 22:15:52Z EXreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -115,20 +115,11 @@ class umil
 	*/
 	function umil($stand_alone = false)
 	{
-		global $config, $user, $phpbb_root_path, $phpEx;
-
 		$this->stand_alone = $stand_alone;
+
 		if (!$stand_alone)
 		{
-			// Check to see if a newer version is available.
-			$info = $this->version_check('www.phpbb.com', '/updatecheck', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
-			if (is_array($info) && isset($info[0]))
-			{
-				if (version_compare(UMIL_VERSION, $info[0], '<'))
-				{
-					trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
-				}
-			}
+			global $config, $user, $phpbb_root_path, $phpEx;
 
 			/* Does not have the fall back option to use en/ if the user's language file does not exist, so we will not use it...unless that is changed.
 			if (method_exists('user', 'set_custom_lang_path'))
@@ -161,6 +152,25 @@ class umil
 			//}
 
 			$user->add_lang(array('acp/common', 'acp/permissions'));
+		}
+
+		// Check to see if a newer version is available.
+		$info = $this->version_check('www.phpbb.com', '/updatecheck', ((defined('PHPBB_QA')) ? 'umil_qa.txt' : 'umil.txt'));
+		if (is_array($info) && isset($info[0]) && isset($info[1]))
+		{
+			if (version_compare(UMIL_VERSION, $info[0], '<'))
+			{
+				global $template, $user, $phpbb_root_path;
+
+				page_header('', false);
+
+				$this_file = str_replace(array(phpbb_realpath($phpbb_root_path), '\\'), array('', '/'), __FILE__);
+				$user->lang['UPDATE_UMIL'] = (isset($user->lang['UPDATE_UMIL'])) ? $user->lang['UPDATE_UMIL'] : 'Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>';
+				$template->assign_vars(array(
+					'S_BOARD_DISABLED'		=> true,
+					'L_BOARD_DISABLED'		=> (!$stand_alone) ? sprintf($user->lang['UPDATE_UMIL'], $info[1]) : sprintf('Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>, then replace the file %2$s with the root/umil/umil.php file included in the downloaded package.', $info[1], $this_file),
+				));
+			}
 		}
 	}
 
@@ -1464,14 +1474,28 @@ class umil
 		}
 		$auth_admin = new auth_admin();
 
-		// in the acl_add_option function it already checks if the auth option exists already or not.
-		if ($global)
+		// We have to add a check to see if the !$global (if global, local, and if local, global) permission already exists.  If it does, acl_add_option currently has a bug which would break the ACL system, so we are having a work-around here.
+		if ($this->permission_exists($auth_option, !$global))
 		{
-			$auth_admin->acl_add_option(array('global' => array($auth_option)));
+			$sql_ary = array(
+				'is_global'	=> 1,
+				'is_local'	=> 1,
+			);
+			$sql = 'UPDATE ' . ACL_OPTIONS_TABLE . '
+				SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE auth_option = \'' . $db->sql_escape($auth_option) . "'";
+			$db->sql_query($sql);
 		}
 		else
 		{
-			$auth_admin->acl_add_option(array('local' => array($auth_option)));
+			if ($global)
+			{
+				$auth_admin->acl_add_option(array('global' => array($auth_option)));
+			}
+			else
+			{
+				$auth_admin->acl_add_option(array('local' => array($auth_option)));
+			}
 		}
 
 		return $this->umil_end();
@@ -1508,17 +1532,39 @@ class umil
 			return $this->umil_end('PERMISSION_NOT_EXIST', $auth_option);
 		}
 
-		$sql = 'SELECT auth_option_id FROM ' . ACL_OPTIONS_TABLE . "
-			WHERE auth_option = '" . $db->sql_escape($auth_option) . "'
-			AND is_global = " . (($global) ? '1' : '0');
-		$db->sql_query($sql);
-		$id = $db->sql_fetchfield('auth_option_id');
+		if ($global)
+		{
+			$type_sql = ' AND is_global = 1';
+		}
+		else
+		{
+			$type_sql = ' AND is_local = 1';
+		}
+		$sql = 'SELECT auth_option_id, is_global, is_local FROM ' . ACL_OPTIONS_TABLE . "
+			WHERE auth_option = '" . $db->sql_escape($auth_option) . "'" .
+			$type_sql;
+		$result = $db->sql_query($sql);
+		$row = $db->sql_fetchrow($result);
+		$db->sql_freeresult($result);
 
-		// Delete time
-		$db->sql_query('DELETE FROM ' . ACL_GROUPS_TABLE . ' WHERE auth_option_id = ' . $id);
-		$db->sql_query('DELETE FROM ' . ACL_OPTIONS_TABLE . ' WHERE auth_option_id = ' . $id);
-		$db->sql_query('DELETE FROM ' . ACL_ROLES_DATA_TABLE . ' WHERE auth_option_id = ' . $id);
-		$db->sql_query('DELETE FROM ' . ACL_USERS_TABLE . ' WHERE auth_option_id = ' . $id);
+		$id = $row['auth_option_id'];
+
+		// If it is a local and global permission, do not remove the row! :P
+		if ($row['is_global'] && $row['is_local'])
+		{
+			$sql = 'UPDATE ' . ACL_OPTIONS_TABLE . '
+				SET ' . (($global) ? 'is_global = 0' : 'is_local = 0') . '
+				WHERE auth_option_id = ' . $id;
+			$db->sql_query($sql);
+		}
+		else
+		{
+			// Delete time
+			$db->sql_query('DELETE FROM ' . ACL_GROUPS_TABLE . ' WHERE auth_option_id = ' . $id);
+			$db->sql_query('DELETE FROM ' . ACL_ROLES_DATA_TABLE . ' WHERE auth_option_id = ' . $id);
+			$db->sql_query('DELETE FROM ' . ACL_USERS_TABLE . ' WHERE auth_option_id = ' . $id);
+			$db->sql_query('DELETE FROM ' . ACL_OPTIONS_TABLE . ' WHERE auth_option_id = ' . $id);
+		}
 
 		// Purge the auth cache
 		$cache->destroy('_acl_options');
@@ -1793,9 +1839,9 @@ class umil
 	*/
 	function table_exists($table_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!function_exists('get_tables'))
 		{
@@ -1823,7 +1869,7 @@ class umil
 	*/
 	function table_add($table_name, $table_data = array())
 	{
-		global $db, $dbms, $table_prefix, $user;
+		global $db, $dbms, $user;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1835,7 +1881,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_ADD', $table_name);
 
@@ -1881,7 +1927,7 @@ class umil
 	*/
 	function table_remove($table_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1893,7 +1939,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_REMOVE', $table_name);
 
@@ -1914,9 +1960,9 @@ class umil
 	*/
 	function table_column_exists($table_name, $column_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!class_exists('phpbb_db_tools'))
 		{
@@ -1935,7 +1981,7 @@ class umil
 	*/
 	function table_column_add($table_name, $column_name = '', $column_data = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1947,7 +1993,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_ADD', $table_name, $column_name);
 
@@ -1975,7 +2021,7 @@ class umil
 	*/
 	function table_column_update($table_name, $column_name = '', $column_data = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1987,7 +2033,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_UPDATE', $table_name, $column_name);
 
@@ -2015,7 +2061,7 @@ class umil
 	*/
 	function table_column_remove($table_name, $column_name = '')
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2027,7 +2073,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_COLUMN_REMOVE', $table_name, $column_name);
 
@@ -2055,9 +2101,9 @@ class umil
 	*/
 	function table_index_exists($table_name, $index_name)
 	{
-		global $db, $table_prefix;
+		global $db;
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		if (!class_exists('phpbb_db_tools'))
 		{
@@ -2084,7 +2130,7 @@ class umil
 	*/
 	function table_index_add($table_name, $index_name = '', $column = array())
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2096,7 +2142,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_KEY_ADD', $table_name, $index_name);
 
@@ -2134,7 +2180,7 @@ class umil
 	*/
 	function table_index_remove($table_name, $index_name = '')
 	{
-		global $db, $table_prefix;
+		global $db;
 
 		// Multicall
 		if (is_array($table_name))
@@ -2146,7 +2192,7 @@ class umil
 			return;
 		}
 
-		$table_name = str_replace('phpbb_', $table_prefix, $table_name);
+		$this->get_table_name($table_name);
 
 		$this->umil_start('TABLE_KEY_REMOVE', $table_name, $index_name);
 
@@ -2670,6 +2716,19 @@ class umil
 		}
 
 		return $sql;
+	}
+
+	/**
+	* Get the real table name
+	*
+	* @param mixed $table_name
+	*/
+	function get_table_name(&$table_name)
+	{
+		global $table_prefix;
+
+		// Replacing phpbb_ with the $table_prefix, but, just in case we have a different table prefix with phpbb_ in it (say, like phpbb_3), we are replacing the table prefix with phpbb_ first to make sure we do not have issues.
+		$table_name = str_replace('phpbb_', $table_prefix, str_replace($table_prefix, 'phpbb_', $table_name));
 	}
 }
 
