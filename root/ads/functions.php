@@ -93,7 +93,7 @@ function setup_ads()
 */
 function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
 {
-	global $config, $db;
+	global $config, $db, $phpbb_root_path;
 
 	$user_id = (int) $user_id;
 	$forum_id = (int) $forum_id;
@@ -179,12 +179,18 @@ function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
 		}
 		$id_list = array_unique($id_list);
 
-		$sql = 'SELECT ad_id, ad_code FROM ' . ADS_TABLE . '
+		$sql = 'SELECT ad_id, ad_code, ad_views, ad_view_limit, ad_clicks, ad_click_limit FROM ' . ADS_TABLE . '
 			WHERE ' . $db->sql_in_set('ad_id', $id_list);
 		$result = $db->sql_query($sql);
 		while ($row = $db->sql_fetchrow($result))
 		{
 			$ads[$row['ad_id']] = $row;
+
+			if ($row['ad_view_limit'] != 0 && ($row['ad_views'] + 1) >= $row['ad_view_limit'])
+			{
+				$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_enabled = 0 WHERE ad_id = ' . $row['ad_id']);
+				$db->sql_query('UPDATE ' . ADS_IN_POSITIONS_TABLE . ' SET ad_enabled = 0 WHERE ad_id = ' . $row['ad_id']);
+			}
 		}
 		$db->sql_freeresult($result);
 

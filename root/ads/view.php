@@ -27,7 +27,21 @@ $db = new $sql_db();
 $db->sql_connect($dbhost, $dbuser, $dbpasswd, $dbname, $dbport, false, defined('PHPBB_DB_NEW_LINK') ? PHPBB_DB_NEW_LINK : false);
 unset($dbpasswd);
 
-$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ad_id = ' . $ad_id);
+$sql = 'SELECT * FROM ' . ADS_TABLE . ' WHERE ad_id = ' . $ad_id;
+$result = $db->sql_query($sql);
+$row = $db->sql_fetchrow($result);
+$db->sql_freeresult($result);
+
+if ($row)
+{
+	$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_views = ad_views + 1 WHERE ad_id = ' . $row['ad_id']);
+
+	if ($row['ad_view_limit'] != 0 && ($row['ad_views'] + 1) >= $row['ad_view_limit'])
+	{
+		$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ad_enabled = 0 WHERE ad_id = ' . $row['ad_id']);
+		$db->sql_query('UPDATE ' . ADS_IN_POSITIONS_TABLE . ' SET ad_enabled = 0 WHERE ad_id = ' . $row['ad_id']);
+	}
+}
 
 $db->sql_close();
 

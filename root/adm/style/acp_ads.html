@@ -65,11 +65,21 @@
 				<dt><label for="ad_views">{L_AD_VIEWS}:</label><br /><span>{L_AD_VIEWS_EXPLAIN}</span></dt>
 				<dd><input class="medium" type="text" id="ad_views" name="ad_views" size="25" maxlength="20" value="{AD_VIEWS}" /></dd>
 			</dl>
+			<!-- ENDIF -->
+			<dl>
+				<dt><label for="ad_view_limit">{L_AD_VIEW_LIMIT}:</label><br /><span>{L_AD_VIEW_LIMIT_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_view_limit" name="ad_view_limit" size="25" maxlength="20" value="{AD_VIEW_LIMIT}" /></dd>
+			</dl>
+			<!-- IF S_EDIT_AD -->
 			<dl>
 				<dt><label for="ad_views">{L_AD_CLICKS}:</label><br /><span>{L_AD_CLICKS_EXPLAIN}</span></dt>
 				<dd><input class="medium" type="text" id="ad_clicks" name="ad_clicks" size="25" maxlength="20" value="{AD_CLICKS}" /></dd>
 			</dl>
 			<!-- ENDIF -->
+			<dl>
+				<dt><label for="ad_click_limit">{L_AD_CLICK_LIMIT}:</label><br /><span>{L_AD_CLICK_LIMIT_EXPLAIN}</span></dt>
+				<dd><input class="medium" type="text" id="ad_click_limit" name="ad_click_limit" size="25" maxlength="20" value="{AD_CLICK_LIMIT}" /></dd>
+			</dl>
 			<dl>
 				<dt><label for="ad_priority">{L_AD_PRIORITY}:</label><br /><span>{L_AD_PRIORITY_EXPLAIN}</span></dt>
 				<dd><input class="medium" type="text" id="ad_priority" name="ad_priority" size="25" maxlength="3" value="{AD_PRIORITY}" /></dd>
@@ -198,8 +208,9 @@
 
 	<table cellspacing="1">
 	<tr>
-		<th style="width: 50%">{L_AD_NAME}</th>
+		<th style="width: 35%">{L_AD_NAME}</th>
 		<th style="width: 100px">{L_AD_ENABLED}</th>
+		<th style="width: 100px">{L_AD_PRIORITY}</th>
 		<th style="width: 100px">{L_AD_VIEWS}</th>
 		<th style="width: 100px">{L_AD_CLICKS}</th>
 		<th style="width: 100px">{L_AD_CREATED}</th>
@@ -209,6 +220,7 @@
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
 			<td><strong>{ads.AD_NAME}</strong></td>
 			<td style="text-align: center;">{ads.AD_ENABLED}</td>
+			<td style="text-align: center;">{ads.AD_PRIORITY}</td>
 			<td style="text-align: center;">{ads.AD_VIEWS}</td>
 			<td style="text-align: center;">{ads.AD_CLICKS}</td>
 			<td style="text-align: center;">{ads.AD_TIME}</td>
