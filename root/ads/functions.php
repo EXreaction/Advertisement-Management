@@ -195,8 +195,8 @@ function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
 
 			if ($acurate_view_count && $config['ads_accurate_views'])
 			{
-				$code = '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code;
-				//$code = '<script type="text/javascript" >countAdView(' . $ad_id . ')</script>' . $code;
+				//$code = '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code;
+				$code = '<script type="text/javascript" >countAdView(' . $ad_id . ')</script>' . $code;
 			}
 
 			$return_list[$position_id] = $code;
