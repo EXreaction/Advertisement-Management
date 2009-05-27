@@ -20,7 +20,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</author>
 		</author-group>
 
-		<mod-version>1.0.8</mod-version>
+		<mod-version>1.0.9-dev</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -99,6 +99,17 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 				<changelog lang="en">
 					<change>Updating the install scripts</change>
 					<change>Adding support for view/click limits</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2009-00-00</date>
+				<rev-version>1.0.9-dev</rev-version>
+				<changelog lang="en">
+					<change>ModX 1.2.2</change>
+					<change>Fixing minor ACP style issue with wrong colspan</change>
+					<change>Adding ads/database.php file for debugging install issues</change>
+					<change>Fix XHTML validation with accurate view count Bug #54</change>
+					<change>Send headers in view/click count to make sure the browser does not cache the files (and therefor does not count page refreshes/changes with the same ad, multiple clicks).</change>
 				</changelog>
 			</entry>
 		</history>

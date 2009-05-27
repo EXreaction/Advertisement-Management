@@ -83,9 +83,9 @@ function setup_ads()
 *
 * @param mixed $user_id
 * @param mixed $forum_id
-* @param bool $acurate_view_count true will enable the acurate view counts, false will disable them (disable when not within phpBB).
+* @param bool $accurate_view_count true will enable the accurate view counts, false will disable them (disable when not within phpBB).
 */
-function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
+function get_ads($user_id = 1, $forum_id = 0, $accurate_view_count = true)
 {
 	global $config, $db, $phpbb_root_path;
 
@@ -193,7 +193,7 @@ function get_ads($user_id = 1, $forum_id = 0, $acurate_view_count = true)
 			$code = htmlspecialchars_decode($ads[$ad_id]['ad_code']);
 			$code = ($config['ads_count_clicks']) ? str_replace(array('{COUNT_CLICK}', '{COUNT_CLICKS}'), ' onclick="countAdClick(' . $ad_id . ');"', $code) : $code;
 
-			if ($acurate_view_count && $config['ads_accurate_views'])
+			if ($accurate_view_count && $config['ads_accurate_views'])
 			{
 				//$code = '<img src="' . $phpbb_root_path . 'images/spacer.gif" alt="" onload="countAdView(' . $ad_id . ');" />' . $code;
 				$code = '<script type="text/javascript" >countAdView(' . $ad_id . ')</script>' . $code;

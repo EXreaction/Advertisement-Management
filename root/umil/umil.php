@@ -4,7 +4,7 @@
  * @author Nathan Guse (EXreaction) http://lithiumstudios.org
  * @author David Lewis (Highway of Life) highwayoflife@gmail.com
  * @package umil
- * @version $Id: umil.php 87 2009-01-28 03:18:12Z EXreaction $
+ * @version $Id: umil.php 127 2009-05-19 19:32:40Z exreaction $
  * @copyright (c) 2008 phpBB Group
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License
  *
@@ -18,7 +18,7 @@ if (!defined('IN_PHPBB'))
 	exit;
 }
 
-define('UMIL_VERSION', '1.0.0-RC2');
+define('UMIL_VERSION', '1.0.0-RC3');
 
 /**
 * Multicall instructions
@@ -29,10 +29,10 @@ define('UMIL_VERSION', '1.0.0-RC2');
 *
 * Example:
 * $umil->config_add(array(
-*	array('config_name', 'config_value', false),
-*	array('config_name1', 'config_value1', false),
-*	array('config_name2', 'config_value2', false),
-*	array('config_name3', 'config_value3', false),
+*	array('config_name', 'config_value'),
+*	array('config_name1', 'config_value1'),
+*	array('config_name2', 'config_value2', true),
+*	array('config_name3', 'config_value3', true),
 * );
 */
 
@@ -76,6 +76,11 @@ define('UMIL_VERSION', '1.0.0-RC2');
 *	table_index_add($table_name, $index_name = '', $column = array())
 *	table_index_remove($table_name, $index_name = '')
 *
+* Table Row Functions
+*	table_row_insert($table_name, $data = array())
+*	table_row_remove($table_name, $data = array())
+*	table_row_update($table_name, $data = array(), $new_data = array())
+*
 * Version Check Function
 * 	version_check($url, $path, $file)
 */
@@ -111,10 +116,44 @@ class umil
 	var $permissions_added = false;
 
 	/**
+	* Database Object
+	*/
+	var $db = false;
+
+	/**
+	* Database Tools Object
+	*/
+	var $db_tools = false;
+
+	/**
 	* Constructor
 	*/
-	function umil($stand_alone = false)
+	function umil($stand_alone = false, $db = false)
 	{
+		// Setup $this->db
+		if ($db !== false)
+		{
+			if (!is_object($db) || !method_exists($db, 'sql_query'))
+			{
+				trigger_error('Invalid $db Object');
+			}
+
+			$this->db = $db;
+		}
+		else
+		{
+			global $db;
+			$this->db = $db;
+		}
+
+		// Setup $this->db_tools
+		if (!class_exists('phpbb_db_tools'))
+		{
+			global $phpbb_root_path, $phpEx;
+			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
+		}
+		$this->db_tools = new phpbb_db_tools($this->db);
+
 		$this->stand_alone = $stand_alone;
 
 		if (!$stand_alone)
@@ -165,10 +204,10 @@ class umil
 				page_header('', false);
 
 				$this_file = str_replace(array(phpbb_realpath($phpbb_root_path), '\\'), array('', '/'), __FILE__);
-				$user->lang['UPDATE_UMIL'] = (isset($user->lang['UPDATE_UMIL'])) ? $user->lang['UPDATE_UMIL'] : 'Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>';
+				$user->lang['UPDATE_UMIL'] = (isset($user->lang['UPDATE_UMIL'])) ? $user->lang['UPDATE_UMIL'] : 'This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>';
 				$template->assign_vars(array(
 					'S_BOARD_DISABLED'		=> true,
-					'L_BOARD_DISABLED'		=> (!$stand_alone) ? sprintf($user->lang['UPDATE_UMIL'], $info[1]) : sprintf('Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>, then replace the file %2$s with the root/umil/umil.php file included in the downloaded package.', $info[1], $this_file),
+					'L_BOARD_DISABLED'		=> (!$stand_alone) ? sprintf($user->lang['UPDATE_UMIL'], $info[1]) : sprintf('This version of UMIL is outdated.<br /><br />Please download the latest UMIL (Unified MOD Install Library) from: <a href="%1$s">%1$s</a>, then replace the file %2$s with the root/umil/umil.php file included in the downloaded package.', $info[1], $this_file),
 				));
 			}
 		}
@@ -181,7 +220,7 @@ class umil
 	*/
 	function umil_start()
 	{
-		global $db, $user;
+		global $user;
 
 		// Set up the command.  This will get the arguments sent to the function.
 		$this->command = '';
@@ -207,9 +246,9 @@ class umil
 		}
 
 		$this->result('SUCCESS');
-		$db->sql_return_on_error(true);
+		$this->db->sql_return_on_error(true);
 
-		//$db->sql_transaction('begin');
+		//$this->db->sql_transaction('begin');
 	}
 
 	/**
@@ -251,7 +290,7 @@ class umil
 	*/
 	function umil_end()
 	{
-		global $db, $user;
+		global $user;
 
 		// Set up the result.  This will get the arguments sent to the function.
 		$args = func_get_args();
@@ -260,25 +299,25 @@ class umil
 			call_user_func_array(array($this, 'result'), $args);
 		}
 
-		if ($db->sql_error_triggered)
+		if ($this->db->sql_error_triggered)
 		{
 			if ($this->result == ((isset($user->lang['SUCCESS'])) ? $user->lang['SUCCESS'] : 'SUCCESS'))
 			{
-				$this->result = 'SQL ERROR ' . $db->sql_error_returned['message'];
+				$this->result = 'SQL ERROR ' . $this->db->sql_error_returned['message'];
 			}
 			else
 			{
-				$this->result .= '<br /><br />SQL ERROR ' . $db->sql_error_returned['message'];
+				$this->result .= '<br /><br />SQL ERROR ' . $this->db->sql_error_returned['message'];
 			}
 
-			//$db->sql_transaction('rollback');
+			//$this->db->sql_transaction('rollback');
 		}
 		else
 		{
-			//$db->sql_transaction('commit');
+			//$this->db->sql_transaction('commit');
 		}
 
-		$db->sql_return_on_error(false);
+		$this->db->sql_return_on_error(false);
 
 		// Auto output if requested.
 		if ($this->auto_display_results && method_exists($this, 'display_results'))
@@ -344,41 +383,7 @@ class umil
 				{
 					if ($method == 'custom')
 					{
-						if (!is_array($params))
-						{
-							$params = array($params);
-						}
-
-						foreach ($params as $function_name)
-						{
-							if (function_exists($function_name))
-							{
-								$return = call_user_func($function_name, $action, $version);
-								if (is_string($return))
-								{
-									$this->umil_start($return);
-									$this->umil_end();
-								}
-								else if (is_array($return) && isset($return['command']))
-								{
-									if (is_array($return['command']))
-									{
-										call_user_func_array(array($this, 'umil_start'), $return['command']);
-									}
-									else
-									{
-										$this->umil_start($return['command']);
-									}
-
-									if (isset($return['result']))
-									{
-										$this->result($return['result']);
-									}
-
-									$this->umil_end();
-								}
-							}
-						}
+						$this->_call_custom_function($params, $action, $version);
 					}
 					else
 					{
@@ -429,41 +434,7 @@ class umil
 				{
 					if ($method == 'custom')
 					{
-						if (!is_array($params))
-						{
-							$params = array($params);
-						}
-
-						foreach ($params as $function_name)
-						{
-							if (function_exists($function_name))
-							{
-								$return = call_user_func($function_name, $action, $version);
-								if (is_string($return))
-								{
-									$this->umil_start($return);
-									$this->umil_end();
-								}
-								else if (is_array($return) && isset($return['command']))
-								{
-									if (is_array($return['command']))
-									{
-										call_user_func_array(array($this, 'umil_start'), $return['command']);
-									}
-									else
-									{
-										$this->umil_start($return['command']);
-									}
-
-									if (isset($return['result']))
-									{
-										$this->result($return['result']);
-									}
-
-									$this->umil_end();
-								}
-							}
-						}
+						$this->_call_custom_function($params, $action, $version);
 					}
 					else
 					{
@@ -475,7 +446,8 @@ class umil
 						}
 
 						// update mode (reversing an action) isn't possible for uninstallations
-						if (strpos($method, 'update'))
+						// Skip the table insert function as we can not undo that either
+						if (strpos($method, 'update') !== false || strpos($method, 'table_insert') !== false)
 						{
 							continue;
 						}
@@ -506,6 +478,59 @@ class umil
 	}
 
 	/**
+	* Call custom function helper
+	*/
+	function _call_custom_function($functions, $action, $version)
+	{
+		if (!is_array($functions))
+		{
+			$functions = array($functions);
+		}
+
+		foreach ($functions as $function)
+		{
+			if (function_exists($function))
+			{
+				// Must reset before calling the function
+				$this->umil_start();
+
+				$return = call_user_func($function, $action, $version);
+				if (is_string($return))
+				{
+					$this->command = ((isset($user->lang[$return])) ? $user->lang[$return] : $return);
+					$this->umil_end();
+				}
+				else if (is_array($return) && isset($return['command']))
+				{
+					$lang_key = array_shift($return['command']);
+
+					if (sizeof($return['command']))
+					{
+						$lang_args = array();
+						foreach ($return['command'] as $arg)
+						{
+							$lang_args[] = (isset($user->lang[$arg])) ? $user->lang[$arg] : $arg;
+						}
+
+						$this->command = @vsprintf(((isset($user->lang[$lang_key])) ? $user->lang[$lang_key] : $lang_key), $lang_args);
+					}
+					else
+					{
+						$this->command = ((isset($user->lang[$lang_key])) ? $user->lang[$lang_key] : $lang_key);
+					}
+
+					if (isset($return['result']))
+					{
+						$this->result($return['result']);
+					}
+
+					$this->umil_end();
+				}
+			}
+		}
+	}
+
+	/**
 	* Cache Purge
 	*
 	* This function is for purging either phpBB3’s data cache, authorization cache, or the styles cache.
@@ -515,7 +540,7 @@ class umil
 	*/
 	function cache_purge($type = '', $style_id = 0)
 	{
-		global $auth, $cache, $db, $user, $phpbb_root_path, $phpEx;
+		global $auth, $cache, $user, $phpbb_root_path, $phpEx;
 
 		// Multicall
 		if (is_array($type))
@@ -531,6 +556,7 @@ class umil
 		}
 
 		$style_id = (int) $style_id;
+		$type = (string) $type; // Prevent PHP bug.
 
 		switch ($type)
 		{
@@ -548,12 +574,12 @@ class umil
 					$return = array();
 					$sql = 'SELECT imageset_id
 						FROM ' . STYLES_IMAGESET_TABLE;
-					$result = $db->sql_query($sql);
-					while ($row = $db->sql_fetchrow($result))
+					$result = $this->db->sql_query($sql);
+					while ($row = $this->db->sql_fetchrow($result))
 					{
 						$return[] = $this->cache_purge('imageset', $row['imageset_id']);
 					}
-					$db->sql_freeresult($result);
+					$this->db->sql_freeresult($result);
 
 					return implode('<br /><br />', $return);
 				}
@@ -562,9 +588,9 @@ class umil
 					$sql = 'SELECT *
 						FROM ' . STYLES_IMAGESET_TABLE . "
 						WHERE imageset_id = $style_id";
-					$result = $db->sql_query($sql);
-					$imageset_row = $db->sql_fetchrow($result);
-					$db->sql_freeresult($result);
+					$result = $this->db->sql_query($sql);
+					$imageset_row = $this->db->sql_fetchrow($result);
+					$this->db->sql_freeresult($result);
 
 					if (!$imageset_row)
 					{
@@ -581,7 +607,7 @@ class umil
 
 					$sql = 'DELETE FROM ' . STYLES_IMAGESET_DATA_TABLE . '
 						WHERE imageset_id = ' . $style_id;
-					$result = $db->sql_query($sql);
+					$result = $this->db->sql_query($sql);
 
 					foreach ($cfg_data_imageset as $image_name => $value)
 					{
@@ -620,9 +646,9 @@ class umil
 
 					$sql = 'SELECT lang_dir
 						FROM ' . LANG_TABLE;
-					$result = $db->sql_query($sql);
+					$result = $this->db->sql_query($sql);
 
-					while ($row = $db->sql_fetchrow($result))
+					while ($row = $this->db->sql_fetchrow($result))
 					{
 						if (@file_exists("{$phpbb_root_path}styles/{$imageset_row['imageset_path']}/imageset/{$row['lang_dir']}/imageset.cfg"))
 						{
@@ -662,9 +688,9 @@ class umil
 							}
 						}
 					}
-					$db->sql_freeresult($result);
+					$this->db->sql_freeresult($result);
 
-					$db->sql_multi_insert(STYLES_IMAGESET_DATA_TABLE, $sql_ary);
+					$this->db->sql_multi_insert(STYLES_IMAGESET_DATA_TABLE, $sql_ary);
 
 					$cache->destroy('sql', STYLES_IMAGESET_DATA_TABLE);
 
@@ -679,12 +705,12 @@ class umil
 					$return = array();
 					$sql = 'SELECT template_id
 						FROM ' . STYLES_TEMPLATE_TABLE;
-					$result = $db->sql_query($sql);
-					while ($row = $db->sql_fetchrow($result))
+					$result = $this->db->sql_query($sql);
+					while ($row = $this->db->sql_fetchrow($result))
 					{
 						$return[] = $this->cache_purge('template', $row['template_id']);
 					}
-					$db->sql_freeresult($result);
+					$this->db->sql_freeresult($result);
 
 					return implode('<br /><br />', $return);
 				}
@@ -693,9 +719,9 @@ class umil
 					$sql = 'SELECT *
 						FROM ' . STYLES_TEMPLATE_TABLE . "
 						WHERE template_id = $style_id";
-					$result = $db->sql_query($sql);
-					$template_row = $db->sql_fetchrow($result);
-					$db->sql_freeresult($result);
+					$result = $this->db->sql_query($sql);
+					$template_row = $this->db->sql_fetchrow($result);
+					$this->db->sql_freeresult($result);
 
 					if (!$template_row)
 					{
@@ -713,9 +739,9 @@ class umil
 						$sql = 'SELECT template_filename, template_mtime
 							FROM ' . STYLES_TEMPLATE_DATA_TABLE . "
 							WHERE template_id = $style_id";
-						$result = $db->sql_query($sql);
+						$result = $this->db->sql_query($sql);
 
-						while ($row = $db->sql_fetchrow($result))
+						while ($row = $this->db->sql_fetchrow($result))
 						{
 //							if (@filemtime("{$phpbb_root_path}styles/{$template_row['template_path']}/template/" . $row['template_filename']) > $row['template_mtime'])
 //							{
@@ -730,7 +756,7 @@ class umil
 								}
 //							}
 						}
-						$db->sql_freeresult($result);
+						$this->db->sql_freeresult($result);
 
 						$includes = array();
 						foreach ($filelist as $pathfile => $file_ary)
@@ -774,10 +800,10 @@ class umil
 									'template_data'			=> (string) file_get_contents("{$phpbb_root_path}styles/{$template_row['template_path']}$pathfile$file"),
 								);
 
-								$sql = 'UPDATE ' . STYLES_TEMPLATE_DATA_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $sql_ary) . "
+								$sql = 'UPDATE ' . STYLES_TEMPLATE_DATA_TABLE . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . "
 									WHERE template_id = $style_id
-										AND template_filename = '" . $db->sql_escape("$pathfile$file") . "'";
-								$db->sql_query($sql);
+										AND template_filename = '" . $this->db->sql_escape("$pathfile$file") . "'";
+								$this->db->sql_query($sql);
 							}
 						}
 						unset($filelist);
@@ -794,12 +820,12 @@ class umil
 					$return = array();
 					$sql = 'SELECT theme_id
 						FROM ' . STYLES_THEME_TABLE;
-					$result = $db->sql_query($sql);
-					while ($row = $db->sql_fetchrow($result))
+					$result = $this->db->sql_query($sql);
+					while ($row = $this->db->sql_fetchrow($result))
 					{
 						$return[] = $this->cache_purge('theme', $row['theme_id']);
 					}
-					$db->sql_freeresult($result);
+					$this->db->sql_freeresult($result);
 
 					return implode('<br /><br />', $return);
 				}
@@ -808,9 +834,9 @@ class umil
 					$sql = 'SELECT *
 						FROM ' . STYLES_THEME_TABLE . "
 						WHERE theme_id = $style_id";
-					$result = $db->sql_query($sql);
-					$theme_row = $db->sql_fetchrow($result);
-					$db->sql_freeresult($result);
+					$result = $this->db->sql_query($sql);
+					$theme_row = $this->db->sql_fetchrow($result);
+					$this->db->sql_freeresult($result);
 
 					if (!$theme_row)
 					{
@@ -847,9 +873,9 @@ class umil
 							'theme_data'	=> $db_theme_data,
 						);
 
-						$sql = 'UPDATE ' . STYLES_THEME_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $sql_ary) . "
+						$sql = 'UPDATE ' . STYLES_THEME_TABLE . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . "
 							WHERE theme_id = $style_id";
-						$db->sql_query($sql);
+						$this->db->sql_query($sql);
 
 						$cache->destroy('sql', STYLES_THEME_TABLE);
 					}
@@ -880,14 +906,14 @@ class umil
 	*/
 	function config_exists($config_name, $return_result = false)
 	{
-		global $config, $db, $cache;
+		global $config, $cache;
 
 		$sql = 'SELECT *
 				FROM ' . CONFIG_TABLE . "
-				WHERE config_name = '" . $db->sql_escape($config_name) . "'";
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+				WHERE config_name = '" . $this->db->sql_escape($config_name) . "'";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
 		if ($row)
 		{
@@ -995,7 +1021,7 @@ class umil
 	*/
 	function config_remove($config_name)
 	{
-		global $cache, $config, $db;
+		global $cache, $config;
 
 		// Multicall
 		if (is_array($config_name))
@@ -1014,8 +1040,8 @@ class umil
 			return $this->umil_end('CONFIG_NOT_EXIST', $config_name);
 		}
 
-		$sql = 'DELETE FROM ' . CONFIG_TABLE . " WHERE config_name = '" . $db->sql_escape($config_name) . "'";
-		$db->sql_query($sql);
+		$sql = 'DELETE FROM ' . CONFIG_TABLE . " WHERE config_name = '" . $this->db->sql_escape($config_name) . "'";
+		$this->db->sql_query($sql);
 
 		unset($config[$config_name]);
 		$cache->destroy('config');
@@ -1034,10 +1060,8 @@ class umil
 	*/
 	function module_exists($class, $parent, $module)
 	{
-		global $db;
-
-		$class = $db->sql_escape($class);
-		$module = $db->sql_escape($module);
+		$class = $this->db->sql_escape($class);
+		$module = $this->db->sql_escape($module);
 
 		// Allows '' to be sent
 		$parent = (!$parent) ? 0 : $parent;
@@ -1048,11 +1072,11 @@ class umil
 			if (!is_numeric($parent))
 			{
 				$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
-					WHERE module_langname = '" . $db->sql_escape($parent) . "'
+					WHERE module_langname = '" . $this->db->sql_escape($parent) . "'
 					AND module_class = '$class'";
-				$result = $db->sql_query($sql);
-				$row = $db->sql_fetchrow($result);
-				$db->sql_freeresult($result);
+				$result = $this->db->sql_query($sql);
+				$row = $this->db->sql_fetchrow($result);
+				$this->db->sql_freeresult($result);
 
 				if (!$row)
 				{
@@ -1071,9 +1095,9 @@ class umil
 			WHERE module_class = '$class'
 			$parent_sql
 			AND module_langname = '$module'";
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
 		if ($row)
 		{
@@ -1114,7 +1138,7 @@ class umil
 	*/
 	function module_add($class, $parent = 0, $data = array(), $include_path = false)
 	{
-		global $cache, $db, $user, $phpbb_root_path, $phpEx;
+		global $cache, $user, $phpbb_root_path, $phpEx;
 
 		// Multicall
 		if (is_array($class))
@@ -1192,16 +1216,16 @@ class umil
 		// The "manual" way
 		$this->umil_start('MODULE_ADD', $class, ((isset($user->lang[$data['module_langname']])) ? $user->lang[$data['module_langname']] : $data['module_langname']));
 
-		$class = $db->sql_escape($class);
+		$class = $this->db->sql_escape($class);
 
 		if (!is_numeric($parent))
 		{
 			$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
-				WHERE module_langname = '" . $db->sql_escape($parent) . "'
+				WHERE module_langname = '" . $this->db->sql_escape($parent) . "'
 				AND module_class = '$class'";
-			$result = $db->sql_query($sql);
-			$row = $db->sql_fetchrow($result);
-			$db->sql_freeresult($result);
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
 
 			if (!$row)
 			{
@@ -1209,6 +1233,10 @@ class umil
 			}
 
 			$parent = $data['parent_id'] = $row['module_id'];
+		}
+		else if ($parent && !$this->module_exists($class, false, $parent))
+		{
+			return $this->umil_end('PARENT_NOT_EXIST');
 		}
 
 		if ($this->module_exists($class, $parent, $data['module_langname']))
@@ -1263,7 +1291,7 @@ class umil
 	*/
 	function module_remove($class, $parent = 0, $module = '', $include_path = false)
 	{
-		global $cache, $db, $user, $phpbb_root_path, $phpEx;
+		global $cache, $user, $phpbb_root_path, $phpEx;
 
 		// Multicall
 		if (is_array($class))
@@ -1327,7 +1355,7 @@ class umil
 		}
 		else
 		{
-			$class = $db->sql_escape($class);
+			$class = $this->db->sql_escape($class);
 
 			if (!$this->module_exists($class, $parent, $module))
 			{
@@ -1341,11 +1369,11 @@ class umil
 				if (!is_numeric($parent))
 				{
 					$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
-						WHERE module_langname = '" . $db->sql_escape($parent) . "'
+						WHERE module_langname = '" . $this->db->sql_escape($parent) . "'
 						AND module_class = '$class'";
-					$result = $db->sql_query($sql);
-					$row = $db->sql_fetchrow($result);
-					$db->sql_freeresult($result);
+					$result = $this->db->sql_query($sql);
+					$row = $this->db->sql_fetchrow($result);
+					$this->db->sql_freeresult($result);
 
 					// we know it exists from the module_exists check
 
@@ -1360,17 +1388,17 @@ class umil
 			$module_ids = array();
 			if (!is_numeric($module))
 			{
-				$module = $db->sql_escape($module);
+				$module = $this->db->sql_escape($module);
 				$sql = 'SELECT module_id FROM ' . MODULES_TABLE . "
 					WHERE module_langname = '$module'
 					AND module_class = '$class'
 					$parent_sql";
-				$result = $db->sql_query($sql);
-				while ($row = $db->sql_fetchrow($result))
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
 				{
 					$module_ids[] = (int) $row['module_id'];
 				}
-				$db->sql_freeresult($result);
+				$this->db->sql_freeresult($result);
 
 				$module_name = $module;
 			}
@@ -1381,9 +1409,9 @@ class umil
 					WHERE module_id = $module
 					AND module_class = '$class'
 					$parent_sql";
-				$result = $db->sql_query($sql);
-				$row = $db->sql_fetchrow($result);
-				$db->sql_freeresult($result);
+				$result = $this->db->sql_query($sql);
+				$row = $this->db->sql_fetchrow($result);
+				$this->db->sql_freeresult($result);
 
 				$module_name = $row['module_langname'];
 				$module_ids[] = $module;
@@ -1433,8 +1461,6 @@ class umil
 	*/
 	function permission_exists($auth_option, $global = true)
 	{
-		global $db;
-
 		if ($global)
 		{
 			$type_sql = ' AND is_global = 1';
@@ -1446,12 +1472,12 @@ class umil
 
 		$sql = 'SELECT auth_option_id
 				FROM ' . ACL_OPTIONS_TABLE . "
-				WHERE auth_option = '" . $db->sql_escape($auth_option) . "'"
+				WHERE auth_option = '" . $this->db->sql_escape($auth_option) . "'"
 				. $type_sql;
-		$result = $db->sql_query($sql);
+		$result = $this->db->sql_query($sql);
 
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
 		if ($row)
 		{
@@ -1473,8 +1499,6 @@ class umil
 	*/
 	function permission_add($auth_option, $global = true)
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($auth_option))
 		{
@@ -1511,9 +1535,9 @@ class umil
 				'is_local'	=> 1,
 			);
 			$sql = 'UPDATE ' . ACL_OPTIONS_TABLE . '
-				SET ' . $db->sql_build_array('UPDATE', $sql_ary) . '
-				WHERE auth_option = \'' . $db->sql_escape($auth_option) . "'";
-			$db->sql_query($sql);
+				SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . '
+				WHERE auth_option = \'' . $this->db->sql_escape($auth_option) . "'";
+			$this->db->sql_query($sql);
 		}
 		else
 		{
@@ -1542,7 +1566,7 @@ class umil
 	*/
 	function permission_remove($auth_option, $global = true)
 	{
-		global $auth, $cache, $db;
+		global $auth, $cache;
 
 		// Multicall
 		if (is_array($auth_option))
@@ -1570,11 +1594,11 @@ class umil
 			$type_sql = ' AND is_local = 1';
 		}
 		$sql = 'SELECT auth_option_id, is_global, is_local FROM ' . ACL_OPTIONS_TABLE . "
-			WHERE auth_option = '" . $db->sql_escape($auth_option) . "'" .
+			WHERE auth_option = '" . $this->db->sql_escape($auth_option) . "'" .
 			$type_sql;
-		$result = $db->sql_query($sql);
-		$row = $db->sql_fetchrow($result);
-		$db->sql_freeresult($result);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
 		$id = $row['auth_option_id'];
 
@@ -1584,15 +1608,15 @@ class umil
 			$sql = 'UPDATE ' . ACL_OPTIONS_TABLE . '
 				SET ' . (($global) ? 'is_global = 0' : 'is_local = 0') . '
 				WHERE auth_option_id = ' . $id;
-			$db->sql_query($sql);
+			$this->db->sql_query($sql);
 		}
 		else
 		{
 			// Delete time
-			$db->sql_query('DELETE FROM ' . ACL_GROUPS_TABLE . ' WHERE auth_option_id = ' . $id);
-			$db->sql_query('DELETE FROM ' . ACL_ROLES_DATA_TABLE . ' WHERE auth_option_id = ' . $id);
-			$db->sql_query('DELETE FROM ' . ACL_USERS_TABLE . ' WHERE auth_option_id = ' . $id);
-			$db->sql_query('DELETE FROM ' . ACL_OPTIONS_TABLE . ' WHERE auth_option_id = ' . $id);
+			$this->db->sql_query('DELETE FROM ' . ACL_GROUPS_TABLE . ' WHERE auth_option_id = ' . $id);
+			$this->db->sql_query('DELETE FROM ' . ACL_ROLES_DATA_TABLE . ' WHERE auth_option_id = ' . $id);
+			$this->db->sql_query('DELETE FROM ' . ACL_USERS_TABLE . ' WHERE auth_option_id = ' . $id);
+			$this->db->sql_query('DELETE FROM ' . ACL_OPTIONS_TABLE . ' WHERE auth_option_id = ' . $id);
 		}
 
 		// Purge the auth cache
@@ -1614,7 +1638,7 @@ class umil
 	*/
 	function permission_set($name, $auth_option = array(), $type = 'role', $has_permission = true)
 	{
-		global $auth, $db;
+		global $auth;
 
 		// Multicall
 		if (is_array($name))
@@ -1633,13 +1657,13 @@ class umil
 
 		$new_auth = array();
 		$sql = 'SELECT auth_option_id FROM ' . ACL_OPTIONS_TABLE . '
-			WHERE ' . $db->sql_in_set('auth_option', $auth_option);
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
+			WHERE ' . $this->db->sql_in_set('auth_option', $auth_option);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$new_auth[] = $row['auth_option_id'];
 		}
-		$db->sql_freeresult($result);
+		$this->db->sql_freeresult($result);
 
 		if (!sizeof($new_auth))
 		{
@@ -1647,15 +1671,18 @@ class umil
 		}
 
 		$current_auth = array();
+
+		$type = (string) $type; // Prevent PHP bug.
+
 		switch ($type)
 		{
 			case 'role' :
 				$this->umil_start('PERMISSION_SET_ROLE', $name);
 
 				$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
-					WHERE role_name = \'' . $db->sql_escape($name) . '\'';
-				$db->sql_query($sql);
-				$role_id = $db->sql_fetchfield('role_id');
+					WHERE role_name = \'' . $this->db->sql_escape($name) . '\'';
+				$this->db->sql_query($sql);
+				$role_id = $this->db->sql_fetchfield('role_id');
 
 				if (!$role_id)
 				{
@@ -1664,18 +1691,18 @@ class umil
 
 				$sql = 'SELECT auth_option_id, auth_setting FROM ' . ACL_ROLES_DATA_TABLE . '
 					WHERE role_id = ' . $role_id;
-				$result = $db->sql_query($sql);
-				while ($row = $db->sql_fetchrow($result))
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
 				{
 					$current_auth[$row['auth_option_id']] = $row['auth_setting'];
 				}
-				$db->sql_freeresult($result);
+				$this->db->sql_freeresult($result);
 			break;
 
 			case 'group' :
-				$sql = 'SELECT group_id FROM ' . GROUPS_TABLE . ' WHERE group_name = \'' . $db->sql_escape($name) . '\'';
-				$db->sql_query($sql);
-				$group_id = $db->sql_fetchfield('group_id');
+				$sql = 'SELECT group_id FROM ' . GROUPS_TABLE . ' WHERE group_name = \'' . $this->db->sql_escape($name) . '\'';
+				$this->db->sql_query($sql);
+				$group_id = $this->db->sql_fetchfield('group_id');
 
 				if (!$group_id)
 				{
@@ -1688,14 +1715,14 @@ class umil
 					WHERE group_id = ' . $group_id . '
 					AND auth_role_id <> 0
 					AND forum_id = 0';
-				$db->sql_query($sql);
-				$role_id = $db->sql_fetchfield('auth_role_id');
+				$this->db->sql_query($sql);
+				$role_id = $this->db->sql_fetchfield('auth_role_id');
 				if ($role_id)
 				{
 					$sql = 'SELECT role_name FROM ' . ACL_ROLES_TABLE . '
 						WHERE role_id = ' . $role_id;
-					$db->sql_query($sql);
-					$role_name = $db->sql_fetchfield('role_name');
+					$this->db->sql_query($sql);
+					$role_name = $this->db->sql_fetchfield('role_name');
 
 					return $this->permission_set($role_name, $auth_option, 'role', $has_permission);
 				}
@@ -1704,12 +1731,12 @@ class umil
 
 				$sql = 'SELECT auth_option_id, auth_setting FROM ' . ACL_GROUPS_TABLE . '
 					WHERE group_id = ' . $group_id;
-				$result = $db->sql_query($sql);
-				while ($row = $db->sql_fetchrow($result))
+				$result = $this->db->sql_query($sql);
+				while ($row = $this->db->sql_fetchrow($result))
 				{
 					$current_auth[$row['auth_option_id']] = $row['auth_setting'];
 				}
-				$db->sql_freeresult($result);
+				$this->db->sql_freeresult($result);
 			break;
 		}
 
@@ -1729,7 +1756,7 @@ class umil
 					}
 				}
 
-				$db->sql_multi_insert(ACL_ROLES_DATA_TABLE, $sql_ary);
+				$this->db->sql_multi_insert(ACL_ROLES_DATA_TABLE, $sql_ary);
 			break;
 
 			case 'group' :
@@ -1745,7 +1772,7 @@ class umil
 					}
 				}
 
-				$db->sql_multi_insert(ACL_GROUPS_TABLE, $sql_ary);
+				$this->db->sql_multi_insert(ACL_GROUPS_TABLE, $sql_ary);
 			break;
 		}
 
@@ -1765,7 +1792,7 @@ class umil
 	*/
 	function permission_unset($name, $auth_option = array(), $type = 'role')
 	{
-		global $auth, $db;
+		global $auth;
 
 		// Multicall
 		if (is_array($name))
@@ -1784,18 +1811,20 @@ class umil
 
 		$to_remove = array();
 		$sql = 'SELECT auth_option_id FROM ' . ACL_OPTIONS_TABLE . '
-			WHERE ' . $db->sql_in_set('auth_option', $auth_option);
-		$result = $db->sql_query($sql);
-		while ($row = $db->sql_fetchrow($result))
+			WHERE ' . $this->db->sql_in_set('auth_option', $auth_option);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$to_remove[] = $row['auth_option_id'];
 		}
-		$db->sql_freeresult($result);
+		$this->db->sql_freeresult($result);
 
 		if (!sizeof($to_remove))
 		{
 			return false;
 		}
+
+		$type = (string) $type; // Prevent PHP bug.
 
 		switch ($type)
 		{
@@ -1803,9 +1832,9 @@ class umil
 				$this->umil_start('PERMISSION_UNSET_ROLE', $name);
 
 				$sql = 'SELECT role_id FROM ' . ACL_ROLES_TABLE . '
-					WHERE role_name = \'' . $db->sql_escape($name) . '\'';
-				$db->sql_query($sql);
-				$role_id = $db->sql_fetchfield('role_id');
+					WHERE role_name = \'' . $this->db->sql_escape($name) . '\'';
+				$this->db->sql_query($sql);
+				$role_id = $this->db->sql_fetchfield('role_id');
 
 				if (!$role_id)
 				{
@@ -1813,14 +1842,14 @@ class umil
 				}
 
 				$sql = 'DELETE FROM ' . ACL_ROLES_DATA_TABLE . '
-					WHERE ' . $db->sql_in_set('auth_option_id', $to_remove);
-				$db->sql_query($sql);
+					WHERE ' . $this->db->sql_in_set('auth_option_id', $to_remove);
+				$this->db->sql_query($sql);
 			break;
 
 			case 'group' :
-				$sql = 'SELECT group_id FROM ' . GROUPS_TABLE . ' WHERE group_name = \'' . $db->sql_escape($name) . '\'';
-				$db->sql_query($sql);
-				$group_id = $db->sql_fetchfield('group_id');
+				$sql = 'SELECT group_id FROM ' . GROUPS_TABLE . ' WHERE group_name = \'' . $this->db->sql_escape($name) . '\'';
+				$this->db->sql_query($sql);
+				$group_id = $this->db->sql_fetchfield('group_id');
 
 				if (!$group_id)
 				{
@@ -1832,14 +1861,14 @@ class umil
 				$sql = 'SELECT auth_role_id FROM ' . ACL_GROUPS_TABLE . '
 					WHERE group_id = ' . $group_id . '
 					AND auth_role_id <> 0';
-				$db->sql_query($sql);
-				$role_id = $db->sql_fetchfield('auth_role_id');
+				$this->db->sql_query($sql);
+				$role_id = $this->db->sql_fetchfield('auth_role_id');
 				if ($role_id)
 				{
 					$sql = 'SELECT role_name FROM ' . ACL_ROLES_TABLE . '
 						WHERE role_id = ' . $role_id;
-					$db->sql_query($sql);
-					$role_name = $db->sql_fetchfield('role_name');
+					$this->db->sql_query($sql);
+					$role_name = $this->db->sql_fetchfield('role_name');
 
 					return $this->permission_unset($role_name, $auth_option, 'role');
 				}
@@ -1847,8 +1876,8 @@ class umil
 				$this->umil_start('PERMISSION_UNSET_GROUP', $name);
 
 				$sql = 'DELETE FROM ' . ACL_GROUPS_TABLE . '
-					WHERE ' . $db->sql_in_set('auth_option_id', $to_remove);
-				$db->sql_query($sql);
+					WHERE ' . $this->db->sql_in_set('auth_option_id', $to_remove);
+				$this->db->sql_query($sql);
 			break;
 		}
 
@@ -1868,9 +1897,13 @@ class umil
 	*/
 	function table_exists($table_name)
 	{
-		global $db;
-
 		$this->get_table_name($table_name);
+
+		// Use sql_table_exists if available
+		if (method_exists($this->db_tools, 'sql_table_exists'))
+		{
+			return $this->db_tools->sql_table_exists($table_name);
+		}
 
 		if (!function_exists('get_tables'))
 		{
@@ -1878,7 +1911,7 @@ class umil
 			include($phpbb_root_path . 'includes/functions_install.' . $phpEx);
 		}
 
-		$tables = get_tables($db);
+		$tables = get_tables($this->db);
 
 		if (in_array($table_name, $tables))
 		{
@@ -1897,7 +1930,7 @@ class umil
 	*/
 	function table_add($table_name, $table_data = array())
 	{
-		global $db, $dbms, $user;
+		global $dbms, $user;
 
 		// Multicall
 		if (is_array($table_name))
@@ -1928,18 +1961,11 @@ class umil
 			global $phpbb_root_path, $phpEx;
 			include("{$phpbb_root_path}includes/functions_install.$phpEx");
 		}
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
 
-		$db_tools = new phpbb_db_tools($db);
-
-		if (method_exists($db_tools, 'sql_create_table'))
+		if (method_exists($this->db_tools, 'sql_create_table'))
 		{
 			// Added in 3.0.5
-			$db_tools->sql_create_table($table_name, $table_data);
+			$this->db_tools->sql_create_table($table_name, $table_data);
 		}
 		else
 		{
@@ -1950,7 +1976,7 @@ class umil
 
 			foreach ($sql_query as $sql)
 			{
-				$db->sql_query($sql);
+				$this->db->sql_query($sql);
 			}
 		}
 
@@ -1964,8 +1990,6 @@ class umil
 	*/
 	function table_remove($table_name)
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -1985,22 +2009,14 @@ class umil
 			return $this->umil_end('TABLE_NOT_EXIST', $table_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-
-		if (method_exists($db_tools, 'sql_table_drop'))
+		if (method_exists($this->db_tools, 'sql_table_drop'))
 		{
 			// Added in 3.0.5
-			$db_tools->sql_table_drop($table_name);
+			$this->db_tools->sql_table_drop($table_name);
 		}
 		else
 		{
-			$db->sql_query('DROP TABLE ' . $table_name);
+			$this->db->sql_query('DROP TABLE ' . $table_name);
 		}
 
 		return $this->umil_end();
@@ -2013,18 +2029,9 @@ class umil
 	*/
 	function table_column_exists($table_name, $column_name)
 	{
-		global $db;
-
 		$this->get_table_name($table_name);
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-		return $db_tools->sql_column_exists($table_name, $column_name);
+		return $this->db_tools->sql_column_exists($table_name, $column_name);
 	}
 
 	/**
@@ -2034,8 +2041,6 @@ class umil
 	*/
 	function table_column_add($table_name, $column_name = '', $column_data = array())
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -2055,14 +2060,7 @@ class umil
 			return $this->umil_end('TABLE_COLUMN_ALREADY_EXISTS', $table_name, $column_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-		$db_tools->sql_column_add($table_name, $column_name, $column_data);
+		$this->db_tools->sql_column_add($table_name, $column_name, $column_data);
 
 		return $this->umil_end();
 	}
@@ -2074,8 +2072,6 @@ class umil
 	*/
 	function table_column_update($table_name, $column_name = '', $column_data = array())
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -2095,14 +2091,7 @@ class umil
 			return $this->umil_end('TABLE_COLUMN_NOT_EXIST', $table_name, $column_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-		$db_tools->sql_column_change($table_name, $column_name, $column_data);
+		$this->db_tools->sql_column_change($table_name, $column_name, $column_data);
 
 		return $this->umil_end();
 	}
@@ -2114,8 +2103,6 @@ class umil
 	*/
 	function table_column_remove($table_name, $column_name = '')
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -2135,14 +2122,7 @@ class umil
 			return $this->umil_end('TABLE_COLUMN_NOT_EXIST', $table_name, $column_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-		$db_tools->sql_column_remove($table_name, $column_name);
+		$this->db_tools->sql_column_remove($table_name, $column_name);
 
 		return $this->umil_end();
 	}
@@ -2154,19 +2134,9 @@ class umil
 	*/
 	function table_index_exists($table_name, $index_name)
 	{
-		global $db;
-
 		$this->get_table_name($table_name);
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-
-		$indexes = $db_tools->sql_list_index($table_name);
+		$indexes = $this->db_tools->sql_list_index($table_name);
 
 		if (in_array($index_name, $indexes))
 		{
@@ -2183,8 +2153,6 @@ class umil
 	*/
 	function table_index_add($table_name, $index_name = '', $column = array())
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -2214,14 +2182,7 @@ class umil
 			$column = array($index_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-
-		$db_tools = new phpbb_db_tools($db);
-		$db_tools->sql_create_index($table_name, $index_name, $column);
+		$this->db_tools->sql_create_index($table_name, $index_name, $column);
 
 		return $this->umil_end();
 	}
@@ -2233,8 +2194,6 @@ class umil
 	*/
 	function table_index_remove($table_name, $index_name = '')
 	{
-		global $db;
-
 		// Multicall
 		if (is_array($table_name))
 		{
@@ -2254,14 +2213,155 @@ class umil
 			return $this->umil_end('TABLE_KEY_NOT_EXIST', $table_name, $index_name);
 		}
 
-		if (!class_exists('phpbb_db_tools'))
+		$this->db_tools->sql_index_drop($table_name, $index_name);
+
+		return $this->umil_end();
+	}
+
+	// Ignore, function was renamed to table_row_insert and keeping for backwards compatibility
+	function table_insert($table_name, $data = array()) { table_row_insert($table_name, $data); }
+
+	/**
+	* Table Insert
+	*
+	* Insert data into a table
+	*/
+	function table_row_insert($table_name, $data = array())
+	{
+		// Multicall
+		if (is_array($table_name))
 		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_row_insert'), $params);
+			}
+			return;
 		}
 
-		$db_tools = new phpbb_db_tools($db);
-		$db_tools->sql_index_drop($table_name, $index_name);
+		$this->get_table_name($table_name);
+
+		$this->umil_start('TABLE_ROW_INSERT_DATA', $table_name);
+
+		if (!$this->table_exists($table_name))
+		{
+			return $this->umil_end('TABLE_NOT_EXIST', $table_name);
+		}
+
+		$this->db->sql_multi_insert($table_name, $data);
+
+		return $this->umil_end();
+	}
+
+	/**
+	* Table Row Update
+	*
+	* Update a row in a table
+	*
+	* $data should be an array with the column names as keys and values as the items to check for each column.  Example:
+	* array('user_id' => 123, 'user_name' => 'test user') would become:
+	* WHERE user_id = 123 AND user_name = 'test user'
+	*
+	* $new_data is the new data it will be updated to (same format as you'd enter into $db->sql_build_array('UPDATE' ).
+	*/
+	function table_row_update($table_name, $data = array(), $new_data = array())
+	{
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_row_remove'), $params);
+			}
+			return;
+		}
+
+		if (!sizeof($data))
+		{
+			return $this->umil_end('FAIL');
+		}
+
+		$this->get_table_name($table_name);
+
+		$this->umil_start('TABLE_ROW_UPDATE_DATA', $table_name);
+
+		if (!$this->table_exists($table_name))
+		{
+			return $this->umil_end('TABLE_NOT_EXIST', $table_name);
+		}
+
+		$sql = '';
+		foreach ($data as $key => $value)
+		{
+			$sql .= ($sql == '') ? 'UPDATE ' . $table_name . ' SET ' . $this->db->sql_build_array('UPDATE', $new_data) . ' WHERE ' : ' AND ';
+			$sql .= $key . ' = ';
+
+			if (is_int($value))
+			{
+				$sql .= $value;
+			}
+			else
+			{
+				$sql .= "'$value'";
+			}
+		}
+
+		$this->db->sql_query($sql);
+
+		return $this->umil_end();
+	}
+
+	/**
+	* Table Row Remove
+	*
+	* Remove a row from a table
+	*
+	* $data should be an array with the column names as keys and values as the items to check for each column.  Example:
+	* array('user_id' => 123, 'user_name' => 'test user') would become:
+	* WHERE user_id = 123 AND user_name = 'test user'
+	*/
+	function table_row_remove($table_name, $data = array())
+	{
+		// Multicall
+		if (is_array($table_name))
+		{
+			foreach ($table_name as $params)
+			{
+				call_user_func_array(array($this, 'table_row_remove'), $params);
+			}
+			return;
+		}
+
+		if (!sizeof($data))
+		{
+			return $this->umil_end('FAIL');
+		}
+
+		$this->get_table_name($table_name);
+
+		$this->umil_start('TABLE_ROW_REMOVE_DATA', $table_name);
+
+		if (!$this->table_exists($table_name))
+		{
+			return $this->umil_end('TABLE_NOT_EXIST', $table_name);
+		}
+
+		$sql = '';
+		foreach ($data as $key => $value)
+		{
+			$sql .= ($sql == '') ? 'DELETE FROM ' . $table_name . ' WHERE ' : ' AND ';
+			$sql .= $key . ' = ';
+
+			if (is_int($value))
+			{
+				$sql .= $value;
+			}
+			else
+			{
+				$sql .= "'$value'";
+			}
+		}
+
+		$this->db->sql_query($sql);
 
 		return $this->umil_end();
 	}
@@ -2315,16 +2415,8 @@ class umil
 	*/
 	function create_table_sql($table_name, $table_data, $dbms = '')
 	{
-		global $db;
-		if (!class_exists('phpbb_db_tools'))
-		{
-			global $phpbb_root_path, $phpEx;
-			include($phpbb_root_path . 'includes/db/db_tools.' . $phpEx);
-		}
-		$db_tools = new phpbb_db_tools($db);
-
 		// To allow testing
-		$dbms = ($dbms) ? $dbms : $db_tools->sql_layer;
+		$dbms = ($dbms) ? $dbms : $this->db_tools->sql_layer;
 
 		// A list of types being unsigned for better reference in some db's
 		$unsigned_types = array('UINT', 'UINT:', 'USINT', 'BOOL', 'TIMESTAMP');
@@ -2361,38 +2453,38 @@ class umil
 			if (strpos($column_data[0], ':') !== false)
 			{
 				list($orig_column_type, $column_length) = explode(':', $column_data[0]);
-				if (!is_array($db_tools->dbms_type_map[$dbms][$orig_column_type . ':']))
+				if (!is_array($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']))
 				{
-					$column_type = sprintf($db_tools->dbms_type_map[$dbms][$orig_column_type . ':'], $column_length);
+					$column_type = sprintf($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':'], $column_length);
 				}
 				else
 				{
-					if (isset($db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule']))
+					if (isset($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule']))
 					{
-						switch ($db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule'][0])
+						switch ($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule'][0])
 						{
 							case 'div':
-								$column_length /= $db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule'][1];
+								$column_length /= $this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['rule'][1];
 								$column_length = ceil($column_length);
-								$column_type = sprintf($db_tools->dbms_type_map[$dbms][$orig_column_type . ':'][0], $column_length);
+								$column_type = sprintf($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':'][0], $column_length);
 							break;
 						}
 					}
 
-					if (isset($db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit']))
+					if (isset($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit']))
 					{
-						switch ($db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][0])
+						switch ($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][0])
 						{
 							case 'mult':
-								$column_length *= $db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][1];
-								if ($column_length > $db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][2])
+								$column_length *= $this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][1];
+								if ($column_length > $this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][2])
 								{
-									$column_type = $db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][3];
+									$column_type = $this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':']['limit'][3];
 									$modded_array[$column_name] = $column_type;
 								}
 								else
 								{
-									$column_type = sprintf($db_tools->dbms_type_map[$dbms][$orig_column_type . ':'][0], $column_length);
+									$column_type = sprintf($this->db_tools->dbms_type_map[$dbms][$orig_column_type . ':'][0], $column_length);
 								}
 							break;
 						}
@@ -2403,7 +2495,7 @@ class umil
 			else
 			{
 				$orig_column_type = $column_data[0];
-				$column_type = $db_tools->dbms_type_map[$dbms][$column_data[0]];
+				$column_type = $this->db_tools->dbms_type_map[$dbms][$column_data[0]];
 				if ($column_type == 'text' || $column_type == 'blob')
 				{
 					$modded_array[$column_name] = $column_type;
