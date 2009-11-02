@@ -39,6 +39,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ADVERTISEMENT_MANAGEMENT_CREDITS'		=> 'Advertisements by <a href="http://www.lithiumstudios.org/">Advertisement Management</a>',
+	'MY_ADS'								=> 'My Advertisements',
 
 	// Default Positions
 	'ABOVE_FOOTER'			=> 'Above Footer',
