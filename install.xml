@@ -110,6 +110,7 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 					<change>Adding ads/database.php file for debugging install issues</change>
 					<change>Fix XHTML validation with accurate view count Bug #54</change>
 					<change>Send headers in view/click count to make sure the browser does not cache the files (and therefor does not count page refreshes/changes with the same ad, multiple clicks).</change>
+					<change>New Feature: My Advertisements page.  Allows you to set users as owners of certain advertisements so they can visit a page to view the statistics on their advertisements.  This feature is donated by olsserik.</change>
 				</changelog>
 			</entry>
 		</history>
