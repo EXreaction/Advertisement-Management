@@ -122,6 +122,15 @@ $versions = array(
 			array('phpbb_ads', 'ad_click_limit', array('UINT', 0)),
 		),
 	),
+	'1.0.9'		=> array(
+		'config_add'	=> array(
+			array('ads_group', 0),
+		),
+		'table_column_add'	=> array(
+			array('phpbb_ads', 'ad_owner', array('UINT', 0)),
+			array('phpbb_users', 'ad_owner', array('BOOL', 0)),
+		),
+	),
 );
 
 function ads_install($action, $version)

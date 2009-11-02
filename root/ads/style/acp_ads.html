@@ -1,0 +1,63 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ACP_ADVERTISEMENT_MANAGEMENT}</h1>
+
+<br />
+
+<!-- IF S_AD_LIST -->
+	<table cellspacing="1">
+	<tr>
+		<th style="width: 10%">&nbsp;</th>
+		<th style="width: 90%">&nbsp;</th>
+	</tr>
+	<!-- BEGIN ads -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td valign="top">
+				<strong>{L_AD_ENABLED}:</strong><br />
+				<br />
+				<strong>{L_AD_VIEWS}:</strong><br />
+				<!-- IF ads.AD_VIEW_LIMIT --><strong>{L_AD_VIEW_LIMIT}:</strong><br /><!-- ENDIF -->
+				<br />
+				<strong>{L_AD_CLICKS}:</strong><br />
+				<!-- IF ads.AD_CLICK_LIMIT --><strong>{L_AD_CLICK_LIMIT}:</strong><br /><!-- ENDIF -->
+				<br />
+				<strong>{L_AD_CREATED}:</strong><br />
+				<!-- IF ads.AD_TIME_END --><strong>{L_AD_TIME_END}:</strong><br /><!-- ENDIF -->
+				<br />
+				<strong>{L_AD_POSITIONS}:</strong>
+			</td>
+			<td valign="top">
+				{ads.AD_ENABLED}<br />
+				<br />
+				{ads.AD_VIEWS}<br />
+				<!-- IF ads.AD_VIEW_LIMIT -->{ads.AD_VIEW_LIMIT}<br /><!-- ENDIF -->
+				<br />
+				{ads.AD_CLICKS}<br />
+				<!-- IF ads.AD_CLICK_LIMIT -->{ads.AD_CLICK_LIMIT}<br /><!-- ENDIF -->
+				<br />
+				{ads.AD_TIME}<br />
+				<!-- IF ads.AD_TIME_END -->{ads.AD_TIME_END}<br /><!-- ENDIF -->
+				<br />
+				{ads.AD_IN_POSITIONS}
+			</td>
+		</tr>
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td colspan="2">
+				<strong>{L_AD_CODE}:</strong><br />
+				{ads.AD_CODE}<br />
+				<br />
+				<strong>{L_PREVIEW}:</strong><br />
+				{ads.AD_CODE_DISPLAY}
+			</td>
+		</tr>
+	<!-- END ads -->
+	</tbody>
+	</table>
+
+	<br />
+	<p>{L_AD_LIST_NOTICE}</p>
+<!-- ENDIF -->
+
+<!-- INCLUDE overall_footer.html -->

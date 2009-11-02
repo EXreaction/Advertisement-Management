@@ -95,6 +95,7 @@ class acp_ads
 			'ads_count_clicks'		=> array('lang' => 'ADS_COUNT_CLICKS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 			'ads_count_views'		=> array('lang' => 'ADS_COUNT_VIEWS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
 			'ads_accurate_views'	=> array('lang' => 'ADS_ACCURATE_VIEWS', 'validate' => 'bool', 'type' => 'radio:yes_no', 'explain' => true),
+			'ads_group'				=> array('lang'	=> 'ADS_GROUP', 'validate' => 'int:0', 'type' => 'select', 'method' => 'group_select', 'explain' => true),
 		);
 		$this->new_config = $config;
 		$this->new_config = (isset($_REQUEST['config'])) ? utf8_normalize_nfc(request_var('config', array('' => ''), true)) : $this->new_config;
@@ -108,6 +109,8 @@ class acp_ads
 		$ad_forums = request_var('ad_forums', array(0), true);
 		$ad_positions = request_var('ad_positions', array(0), true);
 		$position_name = request_var('position_name', '');
+		$ad_owner = utf8_normalize_nfc(request_var('ad_owner', '', true));
+		$ad_owner_id = 0;
 
 		switch ($action)
 		{
@@ -187,6 +190,25 @@ class acp_ads
 						{
 							$error[] = $user->lang['AD_TIME_END_BEFORE_NOW'];
 						}
+
+						if ($ad_owner)
+						{
+							$sql = 'SELECT user_id FROM ' . USERS_TABLE . '
+								WHERE user_type <> ' . USER_IGNORE . '
+								AND ' . ((is_numeric($ad_owner)) ? 'user_id = ' . (int) $ad_owner : 'username_clean = \'' . $db->sql_escape(utf8_clean_string($ad_owner)) . '\'');
+							$result = $db->sql_query($sql);
+							$user_row = $db->sql_fetchrow($result);
+							$db->sql_freeresult($result);
+
+							if (!$user_row)
+							{
+								$error[] = $user->lang['NO_USER'];
+							}
+							else
+							{
+								$ad_owner_id = $user_row['user_id'];
+							}
+						}
 					}
 
 					if ($submit && !sizeof($error))
@@ -204,11 +226,42 @@ class acp_ads
 							'ad_priority'		=> request_var('ad_priority', 5),
 							'ad_enabled'		=> (isset($_POST['ad_enabled'])) ? true : false,
 							'all_forums'		=> (isset($_POST['all_forums']) || !$config['ads_rules_forums']) ? true : false,
+							'ad_owner'			=> $ad_owner_id,
 						);
+
+						// Set them as able to see the ads page (stored as 1 for ad_user) and add them to the ads group if required
+						if ($ad_owner_id && ($action != 'edit' || $ad_owner_id != $ad_data['ad_owner']))
+						{
+							$sql = 'UPDATE ' . USERS_TABLE . ' SET ad_owner = 1
+								WHERE user_id = ' . (int) $ad_owner_id;
+							$db->sql_query($sql);
+
+							if ($config['ads_group'])
+							{
+								group_user_add($config['ads_group'], array($ad_owner_id));
+							}
+						}
 
 						if ($action == 'edit')
 						{
 							$db->sql_query('UPDATE ' . ADS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $sql_ary) . ' WHERE ad_id = ' . $ad_id);
+
+							// Does the old owner have any ads anymore if the owner was changed?
+							if ($ad_owner_id != $ad_data['ad_owner'])
+							{
+								$sql = 'SELECT COUNT(ad_id) AS count FROM ' . ADS_TABLE . '
+									WHERE ad_owner = ' . $ad_data['ad_owner'];
+								$db->sql_query($sql);
+								$count = $db->sql_fetchfield('count');
+								$db->sql_freeresult();
+
+								if (!$count)
+								{
+									$sql = 'UPDATE ' . USERS_TABLE . ' SET ad_owner = 0
+										WHERE user_id = ' . (int) $ad_data['ad_owner'];
+									$db->sql_query($sql);
+								}
+							}
 
 							// This is the simplest way to update the groups/forums/positions list
 							if ($config['ads_rules_groups'])
@@ -261,6 +314,16 @@ class acp_ads
 					}
 					else
 					{
+						$ad_owner = utf8_normalize_nfc(request_var('ad_owner', '', true));
+						if ($action == 'edit' && !$submit && $ad_data['ad_owner'])
+						{
+							$sql = 'SELECT username FROM ' . USERS_TABLE . '
+								WHERE user_id = ' . (int) $ad_data['ad_owner'];
+							$db->sql_query($sql);
+							$ad_owner = $db->sql_fetchfield('username');
+							$db->sql_freeresult();
+						}
+
 						$template->assign_vars(array(
 							'S_ADD_AD'			=> ($action == 'add') ? true : false,
 							'S_EDIT_AD'			=> ($action == 'edit') ? true : false,
@@ -278,6 +341,7 @@ class acp_ads
 							'AD_PRIORITY'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
 							'AD_ENABLED'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
 							'ALL_FORUMS'		=> ($action == 'edit' && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,
+							'AD_OWNER'			=> $ad_owner,
 							'U_ACTION'			=> $this->u_action . '&amp;a=' . $ad_id . '&amp;action=' . $action,
 						));
 
@@ -506,6 +570,33 @@ class acp_ads
 			'ERROR'				=> implode('<br />', $error),
 			'ADS_VERSION'		=> $config['ads_version'],
 		));
+	}
+
+	function group_select($selected_value, $key)
+	{
+		global $db, $user;
+
+		$selected = ($selected_value == 0) ? ' selected="selected"' : '';
+		$select = '<option value="0"' . $selected . '>----- ' . $user->lang['NA'] . ' -----</option>';
+
+		$sql = 'SELECT *
+			FROM ' . GROUPS_TABLE;
+		$result = $db->sql_query($sql);
+		while ($row = $db->sql_fetchrow($result))
+		{
+			if ($user->data['user_type'] != USER_FOUNDER && $row['group_founder_manage'])
+			{
+				continue;
+			}
+
+			$selected = ($selected_value == $row['group_id']) ? ' selected="selected"' : '';
+			$lang = (isset($user->lang['G_' . $row['group_name']])) ? $user->lang['G_' . $row['group_name']] : $row['group_name'];
+
+			$select .= '<option value="' . $row['group_id'] . '"' . $selected . '>' . $lang . '</option>';
+		}
+		$db->sql_freeresult($result);
+
+		return $select;
 	}
 }
 
