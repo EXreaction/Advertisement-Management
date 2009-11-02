@@ -30,6 +30,7 @@ class acp_ads
 		global $cache, $config, $phpbb_root_path, $phpbb_admin_path, $phpEx;
 
 		require($phpbb_root_path . 'ads/constants.' . $phpEx);
+		require($phpbb_root_path . 'includes/functions_user.' . $phpEx);
 
 		$user->add_lang('mods/ads');
 		$this->tpl_name = 'acp_ads';
@@ -260,6 +261,11 @@ class acp_ads
 									$sql = 'UPDATE ' . USERS_TABLE . ' SET ad_owner = 0
 										WHERE user_id = ' . (int) $ad_data['ad_owner'];
 									$db->sql_query($sql);
+
+									if ($config['ads_group'])
+									{
+										group_user_del($config['ads_group'], array($ad_data['ad_owner']));
+									}
 								}
 							}
 
@@ -439,6 +445,25 @@ class acp_ads
 						$db->sql_query('DELETE FROM ' . ADS_IN_POSITIONS_TABLE . ' WHERE ad_id = ' . $ad_id);
 						$cache->destroy('sql', ADS_FORUMS_TABLE);
 						$cache->destroy('sql', ADS_GROUPS_TABLE);
+
+						// Does the old owner have any ads anymore if the owner was changed?
+						$sql = 'SELECT COUNT(ad_id) AS count FROM ' . ADS_TABLE . '
+							WHERE ad_owner = ' . $ad_data['ad_owner'];
+						$db->sql_query($sql);
+						$count = $db->sql_fetchfield('count');
+						$db->sql_freeresult();
+
+						if (!$count)
+						{
+							$sql = 'UPDATE ' . USERS_TABLE . ' SET ad_owner = 0
+								WHERE user_id = ' . (int) $ad_data['ad_owner'];
+							$db->sql_query($sql);
+
+							if ($config['ads_group'])
+							{
+								group_user_del($config['ads_group'], array($ad_data['ad_owner']));
+							}
+						}
 
 						trigger_error($user->lang['DELETE_AD_SUCCESS'] . adm_back_link($this->u_action));
 					}
