@@ -8,40 +8,52 @@
 
 <!-- IF S_AD_LIST -->
 	<table cellspacing="1">
-	<tr>
-		<th style="width: 10%">&nbsp;</th>
-		<th style="width: 90%">&nbsp;</th>
-	</tr>
+		<tr>
+			<th style="width: 150px">&nbsp;</th>
+			<th>&nbsp;</th>
+		</tr>
 	<!-- BEGIN ads -->
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
-			<td valign="top">
-				<strong>{L_AD_ENABLED}:</strong><br />
-				<br />
-				<strong>{L_AD_VIEWS}:</strong><br />
-				<!-- IF ads.AD_VIEW_LIMIT --><strong>{L_AD_VIEW_LIMIT}:</strong><br /><!-- ENDIF -->
-				<br />
-				<strong>{L_AD_CLICKS}:</strong><br />
-				<!-- IF ads.AD_CLICK_LIMIT --><strong>{L_AD_CLICK_LIMIT}:</strong><br /><!-- ENDIF -->
-				<br />
-				<strong>{L_AD_CREATED}:</strong><br />
-				<!-- IF ads.AD_TIME_END --><strong>{L_AD_TIME_END}:</strong><br /><!-- ENDIF -->
-				<br />
-				<strong>{L_AD_POSITIONS}:</strong>
-			</td>
-			<td valign="top">
-				{ads.AD_ENABLED}<br />
-				<br />
-				{ads.AD_VIEWS}<br />
-				<!-- IF ads.AD_VIEW_LIMIT -->{ads.AD_VIEW_LIMIT}<br /><!-- ENDIF -->
-				<br />
-				{ads.AD_CLICKS}<br />
-				<!-- IF ads.AD_CLICK_LIMIT -->{ads.AD_CLICK_LIMIT}<br /><!-- ENDIF -->
-				<br />
-				{ads.AD_TIME}<br />
-				<!-- IF ads.AD_TIME_END -->{ads.AD_TIME_END}<br /><!-- ENDIF -->
-				<br />
-				{ads.AD_IN_POSITIONS}
-			</td>
+			<td><strong>{L_AD_ENABLED}:</strong></td>
+			<td>{ads.AD_ENABLED}</td>
+		</tr>
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_VIEWS}:</strong></td>
+			<td>{ads.AD_VIEWS}</td>
+		</tr>
+		<!-- IF ads.AD_VIEW_LIMIT -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_VIEW_LIMIT}:</strong></td>
+			<td>{ads.AD_VIEW_LIMIT}</td>
+		</tr>
+		<!-- ENDIF -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_CLICKS}:</strong></td>
+			<td>{ads.AD_CLICKS}</td>
+		</tr>
+		<!-- IF ads.AD_CLICK_LIMIT -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_CLICK_LIMIT}:</strong></td>
+			<td>{ads.AD_CLICK_LIMIT}</td>
+		</tr>
+		<!-- ENDIF -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_CREATED}:</strong></td>
+			<td>{ads.AD_TIME}</td>
+		</tr>
+		<!-- IF ads.AD_TIME_END -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_TIME_END}:</strong></td>
+			<td>{ads.AD_TIME_END}</td>
+		</tr>
+		<!-- ENDIF -->
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_AD_POSITIONS}:</strong></td>
+			<td>{ads.AD_IN_POSITIONS}</td>
+		</tr>
+		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
+			<td><strong>{L_FORUMS}:</strong></td>
+			<td>{ads.AD_IN_FORUMS}</td>
 		</tr>
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
 			<td colspan="2">

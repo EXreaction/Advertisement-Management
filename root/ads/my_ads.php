@@ -46,6 +46,16 @@ while ($row = $db->sql_fetchrow($result))
 }
 $db->sql_freeresult($result);
 
+// Forums
+$forums = array();
+$sql = 'SELECT forum_id, forum_name FROM ' . FORUMS_TABLE . ' ORDER BY forum_id ASC';
+$result = $db->sql_query($sql);
+while ($row = $db->sql_fetchrow($result))
+{
+	$forums[$row['forum_id']] = $row['forum_name'];
+}
+$db->sql_freeresult($result);
+
 // Advertisements
 $ads = array();
 $sql = 'SELECT * FROM ' . ADS_TABLE . '
@@ -56,6 +66,7 @@ while ($row = $db->sql_fetchrow($result))
 {
 	$ads[$row['ad_id']] = $row;
 	$ads[$row['ad_id']]['positions'] = array();
+	$ads[$row['ad_id']]['forums'] = array();
 }
 $db->sql_freeresult($result);
 
@@ -68,9 +79,19 @@ while ($row = $db->sql_fetchrow($result))
 }
 $db->sql_freeresult($result);
 
+$sql = 'SELECT * FROM ' . ADS_FORUMS_TABLE . '
+	WHERE ' . $db->sql_in_set('ad_id', array_keys($ads));
+$result = $db->sql_query($sql);
+while ($row = $db->sql_fetchrow($result))
+{
+	$ads[$row['ad_id']]['forums'][] = $forums[$row['forum_id']];
+}
+$db->sql_freeresult($result);
+
 foreach ($ads as $row)
 {
 	$ads_in_positions = implode('<br />', $row['positions']);
+	$ads_in_forums = implode('<br />', $row['forums']);
 
 	$template->assign_block_vars('ads', array(
 		'AD_ID'				=> $row['ad_id'],
@@ -84,6 +105,7 @@ foreach ($ads as $row)
 		'AD_CLICK_LIMIT'	=> $row['ad_click_limit'],
 		'AD_CLICKS'			=> ($row['ad_clicks']) ? $row['ad_clicks'] : $user->lang['0_OR_NA'],
 		'AD_IN_POSITIONS'	=> $ads_in_positions,
+		'AD_IN_FORUMS'		=> ($row['all_forums']) ? $user->lang['ALL_FORUMS'] : $ads_in_forums,
 	));
 }
 
