@@ -348,6 +348,7 @@ class acp_ads
 							'AD_ENABLED'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
 							'ALL_FORUMS'		=> ($action == 'edit' && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,
 							'AD_OWNER'			=> $ad_owner,
+
 							'U_ACTION'			=> $this->u_action . '&amp;a=' . $ad_id . '&amp;action=' . $action,
 						));
 
@@ -509,6 +510,8 @@ class acp_ads
 					$template->assign_vars(array(
 						'S_POSITION_LIST'	=> true,
 						'S_AD_LIST'			=> true,
+
+						'U_ACTION'			=> $this->u_action,
 					));
 
 					// Positions
@@ -584,8 +587,7 @@ class acp_ads
 							'S_EXPLAIN'		=> $vars['explain'],
 							'TITLE_EXPLAIN'	=> $l_explain,
 							'CONTENT'		=> build_cfg_template($type, $config_key, $this->new_config, $config_key, $vars),
-							)
-						);
+						));
 					}
 				}
 			break;

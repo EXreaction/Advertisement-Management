@@ -17,7 +17,7 @@
 	</div>
 <!-- ENDIF -->
 
-<form id="acp_ads" method="post" action="{U_ACTION}">
+<form id="acp_ads1" method="post" action="{U_ACTION}">
 
 	<!-- IF .options -->
 		<!-- BEGIN options -->
@@ -86,7 +86,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_enabled">{L_AD_ENABLED}:</label><br /><span>{L_AD_ENABLED_EXPLAIN}</span></dt>
-				<dd><input type="checkbox" class="radio" name="ad_enabled" value="1"<!-- IF AD_ENABLED --> checked="checked"<!-- ENDIF --> /></dd>
+				<dd><input type="checkbox" class="radio" id="ad_enabled" name="ad_enabled" value="1"<!-- IF AD_ENABLED --> checked="checked"<!-- ENDIF --> /></dd>
 			</dl>
 			<dl>
 				<dt><label for="ad_time_end">{L_AD_TIME_END}:</label><br /><span>{L_AD_TIME_END_EXPLAIN}</span></dt>
@@ -94,7 +94,7 @@
 			</dl>
 			<dl>
 				<dt><label for="ad_positions">{L_AD_POSITIONS}:</label><br /><span>{L_AD_POSITIONS_EXPLAIN}</span></dt>
-				<dd><select id="ad_positions" name="ad_positions[]" multiple="yes" size="8">
+				<dd><select id="ad_positions" name="ad_positions[]" multiple="multiple" size="8">
 					<!-- BEGIN positions -->
 					<option value="{positions.POSITION_ID}"<!-- IF positions.S_SELECTED --> selected="selected"<!-- ENDIF -->>{positions.POSITION_NAME}</option>
 					<!-- END positions -->
@@ -104,7 +104,7 @@
 			<!-- IF S_RULES_GROUPS -->
 			<dl>
 				<dt><label for="ad_groups">{L_AD_GROUPS}:</label><br /><span>{L_AD_GROUPS_EXPLAIN}</span></dt>
-				<dd><select id="ad_groups" name="ad_groups[]" multiple="yes" size="8">
+				<dd><select id="ad_groups" name="ad_groups[]" multiple="multiple" size="8">
 					<!-- BEGIN groups -->
 					<option value="{groups.GROUP_ID}"<!-- IF groups.S_SELECTED --> selected="selected"<!-- ENDIF -->>{groups.GROUP_NAME}</option>
 					<!-- END groups -->
@@ -119,7 +119,7 @@
 			</dl>
 			<dl id="ad_forums_box">
 				<dt><label for="ad_forums">{L_AD_FORUMS}:</label><br /><span>{L_AD_FORUMS_EXPLAIN}</span></dt>
-				<dd><select id="ad_forums" name="ad_forums[]" multiple="yes" size="8">
+				<dd><select id="ad_forums" name="ad_forums[]" multiple="multiple" size="8">
 					<!-- BEGIN forums -->
 					<option value="{forums.FORUM_ID}"<!-- IF forums.S_SELECTED --> selected="selected"<!-- ENDIF -->><!-- BEGIN level -->&nbsp; &nbsp; &nbsp;<!-- END level -->{forums.FORUM_NAME}</option>
 					<!-- END forums -->
@@ -169,12 +169,12 @@
 </form>
 
 <!-- IF S_POSITION_LIST -->
-	<form id="acp_ads" method="post" action="{U_ACTION}">
+	<form id="acp_ads2" method="post" action="{U_ACTION}">
 		<fieldset class="quick">
 			{L_CREATE_POSITION}: <input type="text" name="position_name" value="" /> <input class="button2" type="submit" name="submit" value="{L_SUBMIT}" />
 			<input type="hidden" name="action" value="add" />
-		</fieldset>
 		{S_FORM_TOKEN}
+		</fieldset>
 	</form>
 	<br />
 
@@ -195,18 +195,17 @@
 			<td colspan="5" class="row3">{L_NO_POSITIONS_CREATED}</td>
 		</tr>
 	<!-- END positions -->
-	</tbody>
 	</table>
 <!-- ENDIF -->
 
 <!-- IF S_AD_LIST -->
 	<br />
-	<form id="acp_ads" method="post" action="{U_ACTION}">
+	<form id="acp_ads3" method="post" action="{U_ACTION}">
 		<fieldset class="quick">
 			{L_CREATE_AD}: <input type="text" name="ad_name" value="" /> <input class="button2" type="submit" name="create" value="{L_SUBMIT}" />
 			<input type="hidden" name="action" value="add" />
-		</fieldset>
 		{S_FORM_TOKEN}
+		</fieldset>
 	</form>
 	<br />
 
@@ -240,7 +239,6 @@
 			<td colspan="7" class="row3">{L_NO_ADS_CREATED}</td>
 		</tr>
 	<!-- END ads -->
-	</tbody>
 	</table>
 	<p style="width: 50%;">{L_AD_LIST_NOTICE}</p>
 <!-- ENDIF -->
