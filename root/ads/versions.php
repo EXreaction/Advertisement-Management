@@ -131,6 +131,14 @@ $versions = array(
 			array('phpbb_users', 'ad_owner', array('BOOL', 0)),
 		),
 	),
+	'1.0.10'	=> array(
+		'table_column_update'	=> array(
+			array('phpbb_ads', 'ad_views', array('BINT', 0)),
+			array('phpbb_ads', 'ad_view_limit', array('BINT', 0)),
+			array('phpbb_ads', 'ad_clicks', array('BINT', 0)),
+			array('phpbb_ads', 'ad_click_limit', array('BINT', 0)),
+		),
+	),
 );
 
 function ads_install($action, $version)

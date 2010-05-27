@@ -20,12 +20,12 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 			</author>
 		</author-group>
 
-		<mod-version>1.0.9</mod-version>
+		<mod-version>1.0.10-dev</mod-version>
 
 		<installation>
 			<level>easy</level>
 			<time>300</time>
-			<target-version>3.0.6</target-version>
+			<target-version>3.0.7-pl1</target-version>
 		</installation>
 
 		<history>
@@ -112,6 +112,13 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 					<change>Send headers in view/click count to make sure the browser does not cache the files (and therefor does not count page refreshes/changes with the same ad, multiple clicks).</change>
 					<change>New Feature: My Advertisements page.  Allows you to set users as owners of certain advertisements so they can visit a page to view the statistics on their advertisements.  This feature is donated by olsserik.</change>
 					<change>Note to translators: New language entries have been added, please update the translation packages.</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2010-00-00</date>
+				<rev-version>1.0.10-dev</rev-version>
+				<changelog lang="en">
+					<change>Changing ad_views/clicks fields to big ints to prevent errors when over 16.7m (limit of medium int on mysql)</change>
 				</changelog>
 			</entry>
 		</history>
