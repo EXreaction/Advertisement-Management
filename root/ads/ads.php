@@ -15,9 +15,9 @@
 * $forum_id
 * $user_id
 */
-$position_id = (int) (isset($position_id)) ? $position_id : ((isset($_GET['p'])) ? $_GET['p'] : 0);
-$forum_id = (int) (isset($forum_id)) ? $forum_id : ((isset($_GET['f'])) ? $_GET['f'] : 0);
-$user_id = (int) (isset($user_id)) ? $user_id : ((isset($_GET['u'])) ? $_GET['u'] : 0);
+$position_id = (int) ((isset($position_id)) ? $position_id : ((isset($_GET['p'])) ? $_GET['p'] : 0));
+$forum_id = (int) ((isset($forum_id)) ? $forum_id : ((isset($_GET['f'])) ? $_GET['f'] : 0));
+$user_id = (int) ((isset($user_id)) ? $user_id : ((isset($_GET['u'])) ? $_GET['u'] : 0));
 
 if (!$position_id)
 {
@@ -58,6 +58,13 @@ if (isset($ads[$position_id]))
 $cache->unload();
 $db->sql_close();
 
-(empty($config['gzip_compress'])) ? @flush() : @ob_flush();
+if (empty($config['gzip_compress']))
+{
+	@flush();
+}
+else
+{
+	@ob_flush();
+}
 
 exit;
