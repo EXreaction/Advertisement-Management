@@ -122,9 +122,10 @@ class acp_ads
 			**************************************************************************************/
 			case 'add' :
 			case 'edit' :
+			case 'copy' :
 				if ($position_id || ($position_name && $submit))
 				{
-					if ($action == 'edit' && !$position_data)
+					if (($action == 'edit' || $action == 'copy') && !$position_data)
 					{
 						trigger_error($user->lang['POSITION_NOT_EXIST'] . adm_back_link($this->u_action));
 					}
@@ -174,7 +175,7 @@ class acp_ads
 				}
 				else if ($ad_id || !$position_name)
 				{
-					if ($action == 'edit' && !$ad_data)
+					if (($action == 'edit' || $action == 'copy') && !$ad_data)
 					{
 						trigger_error($user->lang['AD_NOT_EXIST'] . adm_back_link($this->u_action));
 					}
@@ -321,7 +322,7 @@ class acp_ads
 					else
 					{
 						$ad_owner = utf8_normalize_nfc(request_var('ad_owner', '', true));
-						if ($action == 'edit' && !$submit && $ad_data['ad_owner'])
+						if (($action == 'edit' || $action == 'copy') && !$submit && $ad_data['ad_owner'])
 						{
 							$sql = 'SELECT username FROM ' . USERS_TABLE . '
 								WHERE user_id = ' . (int) $ad_data['ad_owner'];
@@ -331,22 +332,22 @@ class acp_ads
 						}
 
 						$template->assign_vars(array(
-							'S_ADD_AD'			=> ($action == 'add') ? true : false,
+							'S_ADD_AD'			=> ($action == 'add' || $action == 'copy') ? true : false,
 							'S_EDIT_AD'			=> ($action == 'edit') ? true : false,
 							'S_RULES_GROUPS'	=> ($config['ads_rules_groups']) ? true : false,
 							'S_RULES_FORUMS'	=> ($config['ads_rules_forums']) ? true : false,
 
-							'AD_NAME'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_name'] : $ad_name,
-							'AD_CODE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_code'] : $ad_code,
-							'AD_NOTE'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_note'] : $ad_note,
-							'AD_TIME_END'		=> ($action == 'edit' && !$submit) ? (($ad_data['ad_time_end']) ? date('d F Y', $ad_data['ad_time_end']) : '') : (($ad_time_end) ? date('d F Y', $ad_time_end) : ''),
-							'AD_VIEW_LIMIT'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_view_limit'] : request_var('ad_view_limit', 0),
-							'AD_VIEWS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_views'] : request_var('ad_views', 0),
-							'AD_CLICK_LIMIT'	=> ($action == 'edit' && !$submit) ? $ad_data['ad_click_limit'] : request_var('ad_click_limit', 0),
-							'AD_CLICKS'			=> ($action == 'edit' && !$submit) ? $ad_data['ad_clicks'] : request_var('ad_clicks', 0),
-							'AD_PRIORITY'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
-							'AD_ENABLED'		=> ($action == 'edit' && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
-							'ALL_FORUMS'		=> ($action == 'edit' && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,
+							'AD_NAME'			=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_name'] : $ad_name,
+							'AD_CODE'			=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_code'] : $ad_code,
+							'AD_NOTE'			=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_note'] : $ad_note,
+							'AD_TIME_END'		=> (($action == 'edit' || $action == 'copy') && !$submit) ? (($ad_data['ad_time_end']) ? date('d F Y', $ad_data['ad_time_end']) : '') : (($ad_time_end) ? date('d F Y', $ad_time_end) : ''),
+							'AD_VIEW_LIMIT'		=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_view_limit'] : request_var('ad_view_limit', 0),
+							'AD_VIEWS'			=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_views'] : request_var('ad_views', 0),
+							'AD_CLICK_LIMIT'	=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_click_limit'] : request_var('ad_click_limit', 0),
+							'AD_CLICKS'			=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_clicks'] : request_var('ad_clicks', 0),
+							'AD_PRIORITY'		=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_priority'] : request_var('ad_priority', 5),
+							'AD_ENABLED'		=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['ad_enabled'] : ((!$submit && $action == 'add') || isset($_POST['ad_enabled'])) ? true : false,
+							'ALL_FORUMS'		=> (($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['all_forums'] : ((!$submit && $action == 'add') || isset($_POST['all_forums'])) ? true : false,
 							'AD_OWNER'			=> $ad_owner,
 
 							'U_ACTION'			=> $this->u_action . '&amp;a=' . $ad_id . '&amp;action=' . $action,
@@ -361,7 +362,7 @@ class acp_ads
 								'GROUP_ID'		=> $row['group_id'],
 								'GROUP_NAME'	=> (isset($user->lang['G_' . $row['group_name']])) ? $user->lang['G_' . $row['group_name']] : $row['group_name'],
 
-								'S_SELECTED'	=> (in_array($row['group_id'], (($action == 'edit' && !$submit) ? $ad_data['groups'] : $ad_groups))) ? true : false,
+								'S_SELECTED'	=> (in_array($row['group_id'], ((($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['groups'] : $ad_groups))) ? true : false,
 							));
 						}
 						$db->sql_freeresult($result);
@@ -388,7 +389,7 @@ class acp_ads
 								'FORUM_ID'		=> $row['forum_id'],
 								'FORUM_NAME'	=> $row['forum_name'],
 
-								'S_SELECTED'	=> (in_array($row['forum_id'], (($action == 'edit' && !$submit) ? $ad_data['forums'] : $ad_forums))) ? true : false,
+								'S_SELECTED'	=> (in_array($row['forum_id'], ((($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['forums'] : $ad_forums))) ? true : false,
 							));
 							for ($i = 0; $i < $padding; $i++)
 							{
@@ -406,7 +407,7 @@ class acp_ads
 								'POSITION_ID'	=> $row['position_id'],
 								'POSITION_NAME'	=> (isset($user->lang[$row['lang_key']])) ? $user->lang[$row['lang_key']] : $row['lang_key'],
 
-								'S_SELECTED'	=> (in_array($row['position_id'], (($action == 'edit' && !$submit) ? $ad_data['positions'] : $ad_positions))) ? true : false,
+								'S_SELECTED'	=> (in_array($row['position_id'], ((($action == 'edit' || $action == 'copy') && !$submit) ? $ad_data['positions'] : $ad_positions))) ? true : false,
 							));
 						}
 						$db->sql_freeresult($result);
@@ -561,6 +562,7 @@ class acp_ads
 
 							'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
 							'U_DELETE'		=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],
+							'U_COPY'		=> $this->u_action . '&amp;action=copy&amp;a=' . $row['ad_id'],
 						));
 					}
 					$db->sql_freeresult($result);

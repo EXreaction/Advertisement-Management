@@ -112,6 +112,7 @@ $lang = array_merge($lang, array(
 
 	'CREATE_AD'									=> 'Create Ad',
 	'CREATE_POSITION'							=> 'Create Position',
+	'COPY'										=> 'Copy',
 
 	'DELETE_AD'									=> 'Delete Advertisement',
 	'DELETE_AD_CONFIRM'							=> 'Are you sure you want to remove this advertisement?',

@@ -211,14 +211,14 @@
 
 	<table cellspacing="1">
 	<tr>
-		<th style="width: 40%">{L_AD_NAME}</th>
+		<th>{L_AD_NAME}</th>
 		<th style="width: 10%">{L_AD_OWNER}</th>
 		<th style="width: 10%">{L_AD_ENABLED}</th>
 		<th style="width: 10%">{L_AD_PRIORITY}</th>
 		<th style="width: 10%">{L_AD_VIEWS}</th>
 		<th style="width: 10%">{L_AD_CLICKS}</th>
 		<th style="width: 10%">{L_AD_CREATED}</th>
-		<th>{L_ACTION}</th>
+		<th style="width: 120px">{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN ads -->
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
@@ -229,7 +229,7 @@
 			<td style="text-align: center;">{ads.AD_VIEWS}</td>
 			<td style="text-align: center;">{ads.AD_CLICKS}</td>
 			<td style="text-align: center;">{ads.AD_TIME}</td>
-			<td style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a></td>
+			<td style="text-align: center;"><a href="{ads.U_EDIT}">{L_EDIT}</a> | <a href="{ads.U_DELETE}">{L_DELETE}</a> | <a href="{ads.U_COPY}">{L_COPY}</a></td>
 		</tr>
 		<!-- IF ads.AD_NOTE -->
 		<tr>
