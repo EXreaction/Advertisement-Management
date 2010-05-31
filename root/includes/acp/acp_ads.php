@@ -531,7 +531,20 @@ class acp_ads
 					$db->sql_freeresult($result);
 
 					// Advertisements
-					$sql = 'SELECT * FROM ' . ADS_TABLE . ' ORDER BY ad_enabled DESC, ad_name ASC';
+					$sql_ary = array(
+						'SELECT' => 'u.user_id, u.username, u.user_colour, a. *',
+						'FROM'		=> array(
+							ADS_TABLE	=> 'a',
+						),
+						'LEFT_JOIN'	=> array(
+							array(
+								'FROM'	=> array(USERS_TABLE => 'u'),
+								'ON'	=> 'u.user_id = a.ad_owner'
+							)
+						),
+						'ORDER_BY' => 'a.ad_owner DESC, a.ad_enabled DESC, a.ad_name ASC',
+					);
+					$sql = $db->sql_build_query('SELECT', $sql_ary);
 					$result = $db->sql_query($sql);
 					while ($row = $db->sql_fetchrow($result))
 					{
@@ -544,6 +557,7 @@ class acp_ads
 							'AD_VIEWS'		=> $row['ad_views'],
 							'AD_CLICKS'		=> ($row['ad_clicks']) ? $row['ad_clicks'] : $user->lang['0_OR_NA'],
 							'AD_PRIORITY'	=> $row['ad_priority'],
+							'AD_OWNER'		=> ($row['ad_owner']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : '',
 
 							'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
 							'U_DELETE'		=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],

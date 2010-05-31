@@ -211,17 +211,19 @@
 
 	<table cellspacing="1">
 	<tr>
-		<th style="width: 35%">{L_AD_NAME}</th>
-		<th style="width: 100px">{L_AD_ENABLED}</th>
-		<th style="width: 100px">{L_AD_PRIORITY}</th>
-		<th style="width: 100px">{L_AD_VIEWS}</th>
-		<th style="width: 100px">{L_AD_CLICKS}</th>
-		<th style="width: 100px">{L_AD_CREATED}</th>
+		<th style="width: 40%">{L_AD_NAME}</th>
+		<th style="width: 10%">{L_AD_OWNER}</th>
+		<th style="width: 10%">{L_AD_ENABLED}</th>
+		<th style="width: 10%">{L_AD_PRIORITY}</th>
+		<th style="width: 10%">{L_AD_VIEWS}</th>
+		<th style="width: 10%">{L_AD_CLICKS}</th>
+		<th style="width: 10%">{L_AD_CREATED}</th>
 		<th>{L_ACTION}</th>
 	</tr>
 	<!-- BEGIN ads -->
 		<tr class="<!-- IF ads.S_ROW_COUNT is even -->col2<!-- ELSE -->col1<!-- ENDIF -->">
 			<td><strong>{ads.AD_NAME}</strong></td>
+			<td style="text-align: center;">{ads.AD_OWNER}</td>
 			<td style="text-align: center;">{ads.AD_ENABLED}</td>
 			<td style="text-align: center;">{ads.AD_PRIORITY}</td>
 			<td style="text-align: center;">{ads.AD_VIEWS}</td>
@@ -231,12 +233,12 @@
 		</tr>
 		<!-- IF ads.AD_NOTE -->
 		<tr>
-			<td colspan="7" class="row3">{ads.AD_NOTE}</td>
+			<td colspan="8" class="row3">{ads.AD_NOTE}</td>
 		</tr>
 		<!-- ENDIF -->
 	<!-- BEGINELSE -->
 		<tr>
-			<td colspan="7" class="row3">{L_NO_ADS_CREATED}</td>
+			<td colspan="8" class="row3">{L_NO_ADS_CREATED}</td>
 		</tr>
 	<!-- END ads -->
 	</table>
