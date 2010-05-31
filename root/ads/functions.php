@@ -63,7 +63,10 @@ function setup_ads()
 				'ADS_' . $position_id		=> $code,
 			));
 		}
+	}
 
+	if (sizeof($ads) || $user->data['ad_owner'])
+	{
 		if (isset($template->_tpldata['.'][0]['ADS_8']))
 		{
 			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . (($user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
