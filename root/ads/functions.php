@@ -27,7 +27,7 @@ function setup_ads()
 	$user->add_lang('mods/ads');
 
 	// Automatically install or update if required
-	if (!isset($config['ads_version']) || $config['ads_version'] != '1.0.9')
+	if (!isset($config['ads_version']) || version_compare($config['ads_version'], '1.0.10', '<'))
 	{
 		if (!class_exists('umil'))
 		{

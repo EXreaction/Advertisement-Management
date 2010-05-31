@@ -34,7 +34,6 @@ require($phpbb_root_path . 'includes/cache.' . $phpEx);
 require($phpbb_root_path . 'includes/constants.' . $phpEx);
 require($phpbb_root_path . 'ads/constants.' . $phpEx);
 require($phpbb_root_path . 'includes/db/' . $dbms . '.' . $phpEx);
-require($phpbb_root_path . 'includes/functions.' . $phpEx);
 require($phpbb_root_path . 'ads/functions.' . $phpEx);
 
 $cache = new cache();
@@ -56,7 +55,9 @@ if (isset($ads[$position_id]))
 	echo $ads[$position_id];
 }
 
-garbage_collection();
-exit_handler();
+$cache->unload();
+$db->sql_close();
 
-?>
+(empty($config['gzip_compress'])) ? @flush() : @ob_flush();
+
+exit;
