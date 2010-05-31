@@ -487,6 +487,30 @@ class acp_ads
 
 			/**************************************************************************************
 			*
+			* Enable/Disable Advertisements
+			*
+			**************************************************************************************/
+			case 'enable' :
+			case 'disable' :
+				// Confirm that the ad exists
+				if ($ad_id)
+				{
+					if (!$ad_data)
+					{
+						trigger_error($user->lang['AD_NOT_EXIST'] . adm_back_link($this->u_action));
+					}
+				}
+
+				$sql = 'UPDATE ' . ADS_TABLE . '
+					SET ad_enabled = ' . (($action == 'enable') ? 1 : 0) . '
+					WHERE ad_id = ' . $ad_id;
+				$db->sql_query($sql);
+
+				redirect($this->u_action);
+			break;
+
+			/**************************************************************************************
+			*
 			* List Advertisements, Positions, Config Settings
 			*
 			**************************************************************************************/
@@ -560,9 +584,10 @@ class acp_ads
 							'AD_PRIORITY'	=> $row['ad_priority'],
 							'AD_OWNER'		=> ($row['ad_owner']) ? get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']) : '',
 
-							'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
-							'U_DELETE'		=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],
-							'U_COPY'		=> $this->u_action . '&amp;action=copy&amp;a=' . $row['ad_id'],
+							'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;a=' . $row['ad_id'],
+							'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;a=' . $row['ad_id'],
+							'U_COPY'			=> $this->u_action . '&amp;action=copy&amp;a=' . $row['ad_id'],
+							'U_ENABLE_DISABLE'	=> $this->u_action . '&amp;action=' . (($row['ad_enabled']) ? 'disable' : 'enable') . '&amp;a=' . $row['ad_id'],
 						));
 					}
 					$db->sql_freeresult($result);
