@@ -50,9 +50,31 @@ $config = $cache->obtain_config();
 
 $ads = get_ads($user_id, $forum_id, false);
 
+if ($config['gzip_compress'])
+{
+	if (@extension_loaded('zlib') && !headers_sent())
+	{
+		ob_start('ob_gzhandler');
+	}
+}
+
+// application/xhtml+xml not used because of IE
+header('Content-type: text/html; charset=UTF-8');
+
+header('Cache-Control: private, no-cache="set-cookie"');
+header('Expires: 0');
+header('Pragma: no-cache');
+
 if (isset($ads[$position_id]))
 {
-	echo $ads[$position_id];
+	if (defined('OUTPUT_ADS_JS') || isset($_GET['display']) && $_GET['display'] == 'js')
+	{
+		echo 'document.write(\'' . 	$ads[$position_id] . '\')';
+	}
+	else
+	{
+		echo $ads[$position_id];
+	}
 }
 
 $cache->unload();
