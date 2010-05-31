@@ -138,6 +138,12 @@ $versions = array(
 			array('phpbb_ads', 'ad_clicks', array('BINT', 0)),
 			array('phpbb_ads', 'ad_click_limit', array('BINT', 0)),
 		),
+
+		'table_index_add'		=> array(
+			array('phpbb_ads', 'ad_priority'),
+			array('phpbb_ads', 'ad_enabled'),
+			array('phpbb_ads', 'ad_owner'),
+		),
 	),
 );
 

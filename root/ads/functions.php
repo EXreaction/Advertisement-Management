@@ -150,7 +150,8 @@ function get_ads($user_id = 1, $forum_id = 0, $accurate_view_count = true)
 	$sql = 'SELECT ad_id, position_id, ad_priority FROM ' . ADS_IN_POSITIONS_TABLE . '
 		WHERE ad_enabled = 1' .
 		((sizeof($forum_ads)) ? ' AND (all_forums = 1 OR ' . $db->sql_in_set('ad_id', $forum_ads) . ')' : (($config['ads_rules_forums']) ? ' AND all_forums = 1' : '')) .
-		((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '');
+		((sizeof($ignore_ads)) ? ' AND ' . $db->sql_in_set('ad_id', $ignore_ads, true) : '') . '
+		ORDER BY ad_priority DESC';
 	$result = $db->sql_query($sql);
 
 	while ($row = $db->sql_fetchrow($result))
@@ -172,7 +173,17 @@ function get_ads($user_id = 1, $forum_id = 0, $accurate_view_count = true)
 	{
 		foreach ($available_ads as $position_id => $ary)
 		{
-			$id_list[] = $available_ads[$position_id] = $ary[rand(0, (sizeof($ary) - 1))];
+			// Prevent duplicate advertisements from showing up in multiple locations
+			foreach ($ary as $key => $ad_id)
+			{
+				if (in_array($ad_id, $id_list) && sizeof($ary) > 1)
+				{
+					unset($ary[$key]);
+				}
+			}
+
+			$rand_key = array_rand($ary);
+			$id_list[] = $available_ads[$position_id] = $ary[$rand_key];
 		}
 		$id_list = array_unique($id_list);
 
