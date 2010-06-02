@@ -256,6 +256,8 @@ Bug reports are accepted and, if confirmed as a bug, you will receive support fo
 <!-- ENDIF -->]]></action>
 			</edit>
 		</open>
-	<diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.</diy-instructions>
+	<diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.
+
+Go to ACP -&gt; Styles -&gt; Template and hit refresh next to the templates you installed the modification on.</diy-instructions>
 	</action-group>
 </mod>
