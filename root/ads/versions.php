@@ -144,6 +144,10 @@ $versions = array(
 			array('phpbb_ads', 'ad_enabled'),
 			array('phpbb_ads', 'ad_owner'),
 		),
+
+		'cache_purge'	=> array(
+			'template',
+		),
 	),
 );
 
