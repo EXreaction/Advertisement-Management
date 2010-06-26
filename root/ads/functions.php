@@ -24,10 +24,15 @@ function setup_ads()
 {
 	global $cache, $config, $db, $phpbb_root_path, $phpEx, $template, $user, $forum_id;
 
+	if (!isset($config['ads_version']))
+	{
+		return;
+	}
+
 	$user->add_lang('mods/ads');
 
-	// Automatically install or update if required
-	if (!isset($config['ads_version']) || version_compare($config['ads_version'], '1.0.10', '<'))
+	// Automatically update if required
+	if (version_compare($config['ads_version'], '1.0.10', '<'))
 	{
 		if (!class_exists('umil'))
 		{
@@ -65,15 +70,15 @@ function setup_ads()
 		}
 	}
 
-	if (sizeof($ads) || $user->data['ad_owner'])
+	if (sizeof($ads) || (isset($user->data['ad_owner']) && $user->data['ad_owner']))
 	{
 		if (isset($template->_tpldata['.'][0]['ADS_8']))
 		{
-			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . (($user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
+			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . ((isset($user->data['ad_owner']) && $user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
 		}
 		else
 		{
-			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . (($user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
+			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . ((isset($user->data['ad_owner']) && $user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
 		}
 
 		$template->assign_var('ADS_CLICK_FILE', $phpbb_root_path . 'ads/click.' . $phpEx);

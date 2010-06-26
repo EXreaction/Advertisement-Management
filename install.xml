@@ -260,8 +260,7 @@
 <!-- ENDIF -->]]></action>
 			</edit>
 		</open>
-	<diy-instructions lang="en">Visit any page on your forum in your web browser and the database sections and module will be installed automatically.
-
-Go to ACP -&gt; Styles -&gt; Template and hit refresh next to the templates you installed the modification on.</diy-instructions>
+		<php-installer>ads/database.php</php-installer>
+		<diy-instructions lang="en">Go to ACP -&gt; Styles -&gt; Template and hit refresh next to the templates you installed the modification on.</diy-instructions>
 	</action-group>
 </mod>
