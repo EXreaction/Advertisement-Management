@@ -506,6 +506,11 @@ class acp_ads
 					WHERE ad_id = ' . $ad_id;
 				$db->sql_query($sql);
 
+				$sql = 'UPDATE ' . ADS_IN_POSITIONS_TABLE . '
+					SET ad_enabled = ' . (($action == 'enable') ? 1 : 0) . '
+					WHERE ad_id = ' . $ad_id;
+				$db->sql_query($sql);
+
 				redirect($this->u_action);
 			break;
 
