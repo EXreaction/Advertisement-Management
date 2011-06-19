@@ -16,12 +16,12 @@
 			</author>
 		</author-group>
 
-		<mod-version>1.0.10</mod-version>
+		<mod-version>1.0.11</mod-version>
 
 		<installation>
 			<level>easy</level>
 			<time>300</time>
-			<target-version>3.0.7-pl1</target-version>
+			<target-version>3.0.9</target-version>
 		</installation>
 
 		<history>
@@ -122,6 +122,16 @@
 					<change>Display the link to advertisement owners even if no ads were displayed on the page #102</change>
 					<change>Center the credits/My Advertisements link</change>
 					<change>Update ModX</change>
+					<change>Update UMIL</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2011-06-18</date>
+				<rev-version>1.0.11</rev-version>
+				<changelog lang="en">
+					<change>Wrong modx version in contrib</change>
+					<change>Fix enable/disable bug</change>
+					<change>Prevent an SQL error when the user has no ads set to their account</change>
 					<change>Update UMIL</change>
 				</changelog>
 			</entry>

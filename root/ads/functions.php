@@ -32,7 +32,7 @@ function setup_ads()
 	$user->add_lang('mods/ads');
 
 	// Automatically update if required
-	if (version_compare($config['ads_version'], '1.0.10', '<'))
+	if (version_compare($config['ads_version'], '1.0.11', '<'))
 	{
 		if (!class_exists('umil'))
 		{
