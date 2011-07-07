@@ -22,6 +22,12 @@ $user->session_begin();
 $auth->acl($user->data);
 $user->setup('mods/info_acp_ads');
 
+// Display a login box if they are not logged in
+if (!$user->data['is_registered'])
+{
+  login_box();
+}
+
 if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
 {
 	trigger_error('Please download the latest UMIL (Unified MOD Install Library) from: <a href="http://www.phpbb.com/mods/umil/">phpBB.com/mods/umil</a>', E_USER_ERROR);
@@ -29,6 +35,12 @@ if (!file_exists($phpbb_root_path . 'umil/umil_frontend.' . $phpEx))
 
 include($phpbb_root_path . 'umil/umil_frontend.' . $phpEx);
 $umil = new umil_frontend('ACP_ADVERTISEMENT_MANAGEMENT', true);
+
+// Check after initiating UMIL.
+if ($user->data['user_type'] != USER_FOUNDER)
+{
+  trigger_error('FOUNDERS_ONLY');
+}
 
 if ($umil->confirm_box(true))
 {

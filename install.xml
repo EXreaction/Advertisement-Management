@@ -16,7 +16,7 @@
 			</author>
 		</author-group>
 
-		<mod-version>1.0.11</mod-version>
+		<mod-version>1.0.12</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -133,6 +133,13 @@
 					<change>Fix enable/disable bug</change>
 					<change>Prevent an SQL error when the user has no ads set to their account</change>
 					<change>Update UMIL</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2011-07-06</date>
+				<rev-version>1.0.12</rev-version>
+				<changelog lang="en">
+					<change>Security: Only allow founders to uninstall the mod</change>
 				</changelog>
 			</entry>
 		</history>
