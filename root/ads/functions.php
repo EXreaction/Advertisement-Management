@@ -3,7 +3,7 @@
 *
 * @package phpBB3 Advertisement Management
 * @version $Id$
-* @copyright (c) 2008 EXreaction, Lithium Studios
+* @copyright (c) 2008 EXreaction
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -72,13 +72,10 @@ function setup_ads()
 
 	if (sizeof($ads) || (isset($user->data['ad_owner']) && $user->data['ad_owner']))
 	{
-		if (isset($template->_tpldata['.'][0]['ADS_8']))
+		if (isset($user->data['ad_owner']) && $user->data['ad_owner'])
 		{
-			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . ((isset($user->data['ad_owner']) && $user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
-		}
-		else
-		{
-			$template->_tpldata['.'][0]['ADS_8'] = '<div class="copyright" style="text-align: center; margin-top: 5px;">' . $user->lang['ADVERTISEMENT_MANAGEMENT_CREDITS'] . ((isset($user->data['ad_owner']) && $user->data['ad_owner']) ? '<br /><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a>' : '') . '</div>';
+			$template->_tpldata['.'][0]['ADS_8'] = (isset($template->_tpldata['.'][0]['ADS_8'])) ? $template->_tpldata['.'][0]['ADS_8'] : '';
+			$template->_tpldata['.'][0]['ADS_8'] .= '<div class="copyright" style="text-align: center; margin-top: 5px;"><a href="' . append_sid("{$phpbb_root_path}ads/my_ads.$phpEx") . '">' . $user->lang['MY_ADS'] . '</a></div>';
 		}
 
 		$template->assign_var('ADS_CLICK_FILE', $phpbb_root_path . 'ads/click.' . $phpEx);

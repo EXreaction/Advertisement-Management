@@ -3,7 +3,7 @@
 *
 * @package phpBB3 Advertisement Management
 * @version $Id$
-* @copyright (c) 2008 EXreaction, Lithium Studios
+* @copyright (c) 2008 EXreaction
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -38,7 +38,6 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
-	'ADVERTISEMENT_MANAGEMENT_CREDITS'		=> 'Advertisements by <a href="http://www.lithiumstudios.org/">Advertisement Management</a>',
 	'MY_ADS'								=> 'My Advertisements',
 
 	// Default Positions
