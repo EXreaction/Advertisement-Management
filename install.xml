@@ -11,12 +11,10 @@
 			<author>
 				<username>EXreaction</username>
 				<realname>Nathan Guse</realname>
-				<homepage>http://www.lithiumstudios.org/</homepage>
-				<email>exreaction@lithiumstudios.org</email>
 			</author>
 		</author-group>
 
-		<mod-version>1.0.12</mod-version>
+		<mod-version>1.0.12-pl1</mod-version>
 
 		<installation>
 			<level>easy</level>
@@ -140,6 +138,13 @@
 				<rev-version>1.0.12</rev-version>
 				<changelog lang="en">
 					<change>Security: Only allow founders to uninstall the mod</change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2013-07-19</date>
+				<rev-version>1.0.12</rev-version>
+				<changelog lang="en">
+					<change>Remove references to Lithium Studios</change>
 				</changelog>
 			</entry>
 		</history>
