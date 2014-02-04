@@ -69,7 +69,10 @@ if (isset($ads[$position_id]))
 {
 	if (defined('OUTPUT_ADS_JS') || isset($_GET['display']) && $_GET['display'] == 'js')
 	{
-		echo 'document.write(\'' . 	$ads[$position_id] . '\')';
+		$ad = str_replace("script", "sc'+'ript", $ads[$position_id]);
+		$ad = str_replace(array("\r", "\r\n", "\n"), "\\n", $ad);
+		echo "var advert = '$ad';";
+		echo 'document.write(advert)';
 	}
 	else
 	{
